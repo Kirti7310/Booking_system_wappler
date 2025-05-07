@@ -1,0 +1,715 @@
+{
+  "type": "mysql2",
+  "connection": {
+    "host": "localhost",
+    "user": "root",
+    "database": "booking_slot_db"
+  },
+  "direct": true,
+  "schema": {
+    "tables": {
+      "users": {
+        "columns": {
+          "user_id": {
+            "db": {
+              "type": "increments",
+              "primary": true,
+              "nullable": false
+            }
+          },
+          "email": {
+            "db_edits": {
+              "name": "email",
+              "maxLength": "30"
+            },
+            "status": {
+              "new": true
+            },
+            "db": {
+              "type": "string",
+              "default": "",
+              "maxLength": 30,
+              "primary": false,
+              "nullable": true
+            }
+          },
+          "username": {
+            "db_edits": {
+              "name": "username",
+              "maxLength": "30"
+            },
+            "status": {
+              "new": true
+            },
+            "db": {
+              "type": "string",
+              "default": "",
+              "maxLength": 30,
+              "primary": false,
+              "nullable": true
+            }
+          },
+          "password": {
+            "db_edits": {
+              "name": "password",
+              "maxLength": "255"
+            },
+            "status": {
+              "new": true
+            },
+            "db": {
+              "type": "string",
+              "default": "",
+              "maxLength": 255,
+              "primary": false,
+              "nullable": true
+            }
+          },
+          "role_id": {
+            "db_edits": {
+              "type": "reference",
+              "name": "role_id",
+              "maxLength": "",
+              "inTable": "roles",
+              "references": "id",
+              "referenceType": "integer",
+              "onUpdate": "CASCADE",
+              "onDelete": "CASCADE"
+            },
+            "status": {
+              "new": true
+            },
+            "db": {
+              "type": "integer",
+              "default": "",
+              "primary": false,
+              "nullable": true
+            }
+          },
+          "created_at": {
+            "db_edits": {
+              "name": "created_at",
+              "maxLength": "",
+              "default": "knex.fn.now()"
+            },
+            "status": {
+              "new": true
+            },
+            "db": {
+              "type": "timestamp",
+              "default": "current_timestamp()",
+              "primary": false,
+              "nullable": false
+            }
+          },
+          "status": {
+            "db_edits": {
+              "name": "status",
+              "maxLength": "20"
+            },
+            "status": {
+              "new": true
+            },
+            "db": {
+              "type": "string",
+              "default": "'active'",
+              "maxLength": 20,
+              "primary": false,
+              "nullable": true
+            }
+          },
+          "gender": {
+            "db_edits": {
+              "name": "gender",
+              "maxLength": "10"
+            },
+            "status": {
+              "new": true
+            },
+            "db": {
+              "type": "string",
+              "default": "",
+              "maxLength": 10,
+              "primary": false,
+              "nullable": true
+            }
+          },
+          "phone": {
+            "db": {
+              "type": "string",
+              "default": "",
+              "maxLength": 20,
+              "primary": false,
+              "nullable": true
+            }
+          },
+          "reset_token": {
+            "db_edits": {
+              "name": "reset_token",
+              "maxLength": "255"
+            },
+            "status": {
+              "new": true
+            },
+            "db": {
+              "type": "string",
+              "default": "",
+              "maxLength": 255,
+              "primary": false,
+              "nullable": true
+            }
+          },
+          "reset_token_exp": {
+            "db_edits": {
+              "name": "reset_token_exp",
+              "maxLength": ""
+            },
+            "status": {
+              "new": true
+            },
+            "db": {
+              "type": "datetime",
+              "default": "",
+              "primary": false,
+              "nullable": true
+            }
+          }
+        },
+        "db": {
+          "engine": "InnoDB",
+          "schema": "booking_slot_db",
+          "collation": "utf8mb4_general_ci",
+          "system_versioned": false
+        }
+      },
+      "time_slot": {
+        "columns": {
+          "time_id": {
+            "db": {
+              "type": "increments",
+              "primary": true,
+              "nullable": false
+            }
+          },
+          "start_time": {
+            "db_edits": {
+              "name": "start_time",
+              "maxLength": "10"
+            },
+            "status": {
+              "new": true
+            },
+            "db": {
+              "type": "string",
+              "default": "",
+              "maxLength": 10,
+              "primary": false,
+              "nullable": true
+            }
+          },
+          "end_time": {
+            "db_edits": {
+              "name": "end_time",
+              "maxLength": "10"
+            },
+            "status": {
+              "new": true
+            },
+            "db": {
+              "type": "string",
+              "default": "",
+              "maxLength": 10,
+              "primary": false,
+              "nullable": true
+            }
+          },
+          "hour": {
+            "db_edits": {
+              "name": "hour",
+              "maxLength": ""
+            },
+            "status": {
+              "new": true
+            },
+            "db": {
+              "type": "integer",
+              "default": "",
+              "primary": false,
+              "nullable": true
+            }
+          }
+        },
+        "db": {
+          "engine": "InnoDB",
+          "schema": "booking_slot_db",
+          "collation": "utf8mb4_general_ci",
+          "system_versioned": false
+        }
+      },
+      "meeting_rooms": {
+        "columns": {
+          "id": {
+            "db_edits": {
+              "name": "id"
+            },
+            "status": {
+              "new": true
+            },
+            "db": {
+              "type": "increments",
+              "primary": true,
+              "nullable": false
+            }
+          },
+          "mroom_name": {
+            "db_edits": {
+              "name": "mroom_name",
+              "maxLength": "40"
+            },
+            "status": {
+              "new": true
+            },
+            "db": {
+              "type": "string",
+              "default": "",
+              "maxLength": 40,
+              "primary": false,
+              "nullable": true
+            }
+          },
+          "mdesc": {
+            "db_edits": {
+              "name": "mdesc",
+              "maxLength": "50"
+            },
+            "status": {
+              "new": true
+            },
+            "db": {
+              "type": "string",
+              "default": "",
+              "maxLength": 50,
+              "primary": false,
+              "nullable": true
+            }
+          }
+        },
+        "db": {
+          "engine": "InnoDB",
+          "schema": "booking_slot_db",
+          "collation": "utf8mb4_general_ci",
+          "system_versioned": false
+        }
+      },
+      "roles": {
+        "columns": {
+          "role_id": {
+            "db": {
+              "type": "increments",
+              "primary": true,
+              "nullable": false
+            }
+          },
+          "roles": {
+            "db_edits": {
+              "name": "roles",
+              "maxLength": "30"
+            },
+            "status": {
+              "new": true
+            },
+            "db": {
+              "type": "string",
+              "default": "",
+              "maxLength": 30,
+              "primary": false,
+              "nullable": true
+            }
+          }
+        },
+        "db": {
+          "engine": "InnoDB",
+          "schema": "booking_slot_db",
+          "collation": "utf8mb4_general_ci",
+          "system_versioned": false
+        }
+      },
+      "booking_users": {
+        "columns": {
+          "booking_id": {
+            "db": {
+              "type": "increments",
+              "primary": true,
+              "nullable": false
+            }
+          },
+          "user_id": {
+            "db_edits": {
+              "type": "reference",
+              "name": "user_id",
+              "maxLength": "",
+              "inTable": "users",
+              "references": "id",
+              "referenceType": "integer",
+              "onUpdate": "CASCADE",
+              "onDelete": "CASCADE"
+            },
+            "status": {
+              "new": true
+            },
+            "db": {
+              "type": "integer",
+              "default": "",
+              "primary": false,
+              "nullable": true
+            }
+          },
+          "date": {
+            "db_edits": {
+              "name": "date",
+              "maxLength": ""
+            },
+            "status": {
+              "new": true
+            },
+            "db": {
+              "type": "date",
+              "default": "",
+              "primary": false,
+              "nullable": true
+            }
+          },
+          "time_id": {
+            "db_edits": {
+              "type": "reference",
+              "name": "time_id",
+              "maxLength": "",
+              "inTable": "time_slot",
+              "references": "id",
+              "referenceType": "integer",
+              "onUpdate": "CASCADE",
+              "onDelete": "CASCADE"
+            },
+            "status": {
+              "new": true
+            },
+            "db": {
+              "type": "integer",
+              "default": "",
+              "primary": false,
+              "nullable": true
+            }
+          },
+          "status": {
+            "db_edits": {
+              "name": "status",
+              "maxLength": "",
+              "enumValues": [
+                "pending",
+                "approved",
+                "rejected"
+              ]
+            },
+            "status": {
+              "new": true
+            },
+            "db": {
+              "type": "enum",
+              "enumValues": [
+                "pending",
+                "approved",
+                "rejected"
+              ],
+              "default": "",
+              "maxLength": 8,
+              "primary": false,
+              "nullable": true
+            }
+          },
+          "meet_id": {
+            "db_edits": {
+              "type": "reference",
+              "name": "meet_id",
+              "maxLength": "",
+              "inTable": "meeting_rooms",
+              "references": "id",
+              "referenceType": "integer",
+              "onUpdate": "CASCADE",
+              "onDelete": "CASCADE"
+            },
+            "status": {
+              "new": true
+            },
+            "db": {
+              "type": "integer",
+              "default": "",
+              "primary": false,
+              "nullable": true
+            }
+          },
+          "book_com": {
+            "db_edits": {
+              "name": "book_com",
+              "maxLength": "100"
+            },
+            "status": {
+              "new": true
+            },
+            "db": {
+              "type": "string",
+              "default": "",
+              "maxLength": 100,
+              "primary": false,
+              "nullable": true
+            }
+          }
+        },
+        "db": {
+          "engine": "InnoDB",
+          "schema": "booking_slot_db",
+          "collation": "utf8mb4_general_ci",
+          "system_versioned": false
+        }
+      },
+      "booking_limits": {
+        "columns": {
+          "id": {
+            "db": {
+              "type": "increments",
+              "primary": true,
+              "nullable": false
+            }
+          },
+          "max_hrs_per_day": {
+            "db": {
+              "type": "decimal",
+              "default": "4.00",
+              "primary": false,
+              "nullable": true
+            }
+          },
+          "max_hrs_per_week": {
+            "db": {
+              "type": "decimal",
+              "default": "4.00",
+              "primary": false,
+              "nullable": true
+            }
+          }
+        },
+        "db": {
+          "engine": "InnoDB",
+          "schema": "booking_slot_db",
+          "collation": "utf8mb4_general_ci",
+          "system_versioned": false
+        }
+      },
+      "admin_navigation": {
+        "columns": {
+          "nav_id": {
+            "db": {
+              "type": "increments",
+              "primary": true,
+              "nullable": false
+            }
+          },
+          "name": {
+            "db": {
+              "type": "string",
+              "default": "",
+              "maxLength": 50,
+              "primary": false,
+              "nullable": true
+            }
+          },
+          "url": {
+            "db": {
+              "type": "string",
+              "default": "",
+              "maxLength": 255,
+              "primary": false,
+              "nullable": true
+            }
+          },
+          "order_id": {
+            "db": {
+              "type": "integer",
+              "default": "1",
+              "primary": false,
+              "nullable": true
+            }
+          },
+          "active": {
+            "db": {
+              "type": "integer",
+              "default": "0",
+              "primary": false,
+              "nullable": true
+            }
+          },
+          "roles_allowed": {
+            "db": {
+              "type": "integer",
+              "default": "1",
+              "primary": false,
+              "nullable": true
+            }
+          }
+        },
+        "db": {
+          "engine": "InnoDB",
+          "schema": "booking_slot_db",
+          "collation": "utf8mb4_general_ci",
+          "system_versioned": false
+        }
+      }
+    },
+    "views": {},
+    "collations": [
+      {
+        "collation": "utf8_general_ci",
+        "charset": "utf8"
+      },
+      {
+        "collation": "utf8_general_mysql500_ci",
+        "charset": "utf8"
+      },
+      {
+        "collation": "utf8_general_nopad_ci",
+        "charset": "utf8"
+      },
+      {
+        "collation": "utf8mb4_general_ci",
+        "charset": "utf8mb4"
+      },
+      {
+        "collation": "utf8mb4_bin",
+        "charset": "utf8mb4"
+      },
+      {
+        "collation": "utf8mb4_unicode_ci",
+        "charset": "utf8mb4"
+      },
+      {
+        "collation": "utf8mb4_icelandic_ci",
+        "charset": "utf8mb4"
+      },
+      {
+        "collation": "utf8mb4_latvian_ci",
+        "charset": "utf8mb4"
+      },
+      {
+        "collation": "utf8mb4_romanian_ci",
+        "charset": "utf8mb4"
+      },
+      {
+        "collation": "utf8mb4_slovenian_ci",
+        "charset": "utf8mb4"
+      },
+      {
+        "collation": "utf8mb4_polish_ci",
+        "charset": "utf8mb4"
+      },
+      {
+        "collation": "utf8mb4_estonian_ci",
+        "charset": "utf8mb4"
+      },
+      {
+        "collation": "utf8mb4_spanish_ci",
+        "charset": "utf8mb4"
+      },
+      {
+        "collation": "utf8mb4_swedish_ci",
+        "charset": "utf8mb4"
+      },
+      {
+        "collation": "utf8mb4_turkish_ci",
+        "charset": "utf8mb4"
+      },
+      {
+        "collation": "utf8mb4_czech_ci",
+        "charset": "utf8mb4"
+      },
+      {
+        "collation": "utf8mb4_danish_ci",
+        "charset": "utf8mb4"
+      },
+      {
+        "collation": "utf8mb4_lithuanian_ci",
+        "charset": "utf8mb4"
+      },
+      {
+        "collation": "utf8mb4_slovak_ci",
+        "charset": "utf8mb4"
+      },
+      {
+        "collation": "utf8mb4_spanish2_ci",
+        "charset": "utf8mb4"
+      },
+      {
+        "collation": "utf8mb4_roman_ci",
+        "charset": "utf8mb4"
+      },
+      {
+        "collation": "utf8mb4_persian_ci",
+        "charset": "utf8mb4"
+      },
+      {
+        "collation": "utf8mb4_esperanto_ci",
+        "charset": "utf8mb4"
+      },
+      {
+        "collation": "utf8mb4_hungarian_ci",
+        "charset": "utf8mb4"
+      },
+      {
+        "collation": "utf8mb4_sinhala_ci",
+        "charset": "utf8mb4"
+      },
+      {
+        "collation": "utf8mb4_german2_ci",
+        "charset": "utf8mb4"
+      },
+      {
+        "collation": "utf8mb4_croatian_mysql561_ci",
+        "charset": "utf8mb4"
+      },
+      {
+        "collation": "utf8mb4_unicode_520_ci",
+        "charset": "utf8mb4"
+      },
+      {
+        "collation": "utf8mb4_vietnamese_ci",
+        "charset": "utf8mb4"
+      },
+      {
+        "collation": "utf8mb4_croatian_ci",
+        "charset": "utf8mb4"
+      },
+      {
+        "collation": "utf8mb4_myanmar_ci",
+        "charset": "utf8mb4"
+      },
+      {
+        "collation": "utf8mb4_thai_520_w2",
+        "charset": "utf8mb4"
+      },
+      {
+        "collation": "utf8mb4_general_nopad_ci",
+        "charset": "utf8mb4"
+      },
+      {
+        "collation": "utf8mb4_nopad_bin",
+        "charset": "utf8mb4"
+      },
+      {
+        "collation": "utf8mb4_unicode_nopad_ci",
+        "charset": "utf8mb4"
+      },
+      {
+        "collation": "utf8mb4_unicode_520_nopad_ci",
+        "charset": "utf8mb4"
+      }
+    ]
+  }
+}

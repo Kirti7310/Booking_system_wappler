@@ -1,0 +1,273 @@
+{
+  "meta": {
+    "$_POST": [
+      {
+        "type": "number",
+        "fieldName": "user_id",
+        "name": "user_id"
+      }
+    ],
+    "$_SESSION": [
+      {
+        "type": "number",
+        "fieldName": "user_id_n",
+        "name": "user_id_n"
+      }
+    ]
+  },
+  "exec": {
+    "steps": {
+      "name": "each_user_slot_details",
+      "module": "dbconnector",
+      "action": "select",
+      "options": {
+        "connection": "booking_db",
+        "sql": {
+          "type": "select",
+          "columns": [
+            {
+              "table": "time_slot",
+              "column": "start_time"
+            },
+            {
+              "table": "time_slot",
+              "column": "end_time"
+            },
+            {
+              "table": "booking_users",
+              "column": "date"
+            },
+            {
+              "table": "booking_users",
+              "column": "status"
+            },
+            {
+              "table": "booking_users",
+              "column": "date"
+            },
+            {
+              "table": "booking_users",
+              "column": "user_id"
+            },
+            {
+              "table": "meeting_rooms",
+              "column": "mroom_name"
+            },
+            {
+              "table": "meeting_rooms",
+              "column": "id"
+            },
+            {
+              "table": "booking_users",
+              "column": "booking_id"
+            },
+            {
+              "table": "booking_users",
+              "column": "time_id"
+            },
+            {
+              "table": "booking_users",
+              "column": "book_com"
+            },
+            {
+              "table": "booking_users",
+              "column": "meet_id"
+            }
+          ],
+          "params": [
+            {
+              "operator": "equal",
+              "type": "expression",
+              "name": ":P1",
+              "value": "{{$_SESSION.user_id_n}}",
+              "test": ""
+            }
+          ],
+          "table": {
+            "name": "booking_users"
+          },
+          "primary": "booking_id",
+          "joins": [
+            {
+              "table": "time_slot",
+              "column": "*",
+              "type": "INNER",
+              "clauses": {
+                "condition": "AND",
+                "rules": [
+                  {
+                    "table": "time_slot",
+                    "column": "time_id",
+                    "operation": "=",
+                    "operator": "equal",
+                    "value": {
+                      "table": "booking_users",
+                      "column": "time_id",
+                      "type": "number"
+                    }
+                  }
+                ]
+              },
+              "primary": "time_id"
+            },
+            {
+              "table": "users",
+              "column": "*",
+              "type": "INNER",
+              "clauses": {
+                "condition": "AND",
+                "rules": [
+                  {
+                    "table": "users",
+                    "column": "user_id",
+                    "operation": "=",
+                    "operator": "equal",
+                    "value": {
+                      "table": "booking_users",
+                      "column": "user_id",
+                      "type": "number"
+                    }
+                  }
+                ]
+              },
+              "primary": "user_id"
+            },
+            {
+              "table": "meeting_rooms",
+              "column": "*",
+              "type": "INNER",
+              "clauses": {
+                "condition": "AND",
+                "rules": [
+                  {
+                    "table": "meeting_rooms",
+                    "column": "id",
+                    "operation": "=",
+                    "operator": "equal",
+                    "value": {
+                      "table": "booking_users",
+                      "column": "meet_id",
+                      "type": "number"
+                    }
+                  }
+                ]
+              },
+              "primary": "id"
+            }
+          ],
+          "wheres": {
+            "condition": "AND",
+            "rules": [
+              {
+                "id": "booking_users.user_id",
+                "field": "booking_users.user_id",
+                "type": "double",
+                "operator": "equal",
+                "value": "{{$_SESSION.user_id_n}}",
+                "data": {
+                  "table": "booking_users",
+                  "column": "user_id",
+                  "type": "number",
+                  "columnObj": {
+                    "type": "reference",
+                    "default": "'4'",
+                    "primary": false,
+                    "nullable": true,
+                    "references": "user_id",
+                    "inTable": "users",
+                    "referenceType": "integer",
+                    "onUpdate": "NO ACTION",
+                    "onDelete": "NO ACTION",
+                    "name": "user_id"
+                  }
+                },
+                "operation": "=",
+                "table": "booking_users"
+              },
+              {
+                "id": "users.status",
+                "field": "users.status",
+                "type": "string",
+                "operator": "equal",
+                "value": "active",
+                "data": {
+                  "table": "users",
+                  "column": "status",
+                  "type": "text",
+                  "columnObj": {
+                    "type": "string",
+                    "default": "'active'",
+                    "maxLength": 20,
+                    "primary": false,
+                    "nullable": true,
+                    "name": "status"
+                  }
+                },
+                "operation": "=",
+                "table": "booking_users"
+              }
+            ],
+            "conditional": null,
+            "valid": true
+          },
+          "query": "select `time_slot`.`start_time`, `time_slot`.`end_time`, `booking_users`.`date`, `booking_users`.`status`, `booking_users`.`date`, `booking_users`.`user_id`, `meeting_rooms`.`mroom_name`, `meeting_rooms`.`id`, `booking_users`.`booking_id`, `booking_users`.`time_id`, `booking_users`.`book_com`, `booking_users`.`meet_id` from `booking_users` inner join `time_slot` on `time_slot`.`time_id` = `booking_users`.`time_id` inner join `users` on `users`.`user_id` = `booking_users`.`user_id` inner join `meeting_rooms` on `meeting_rooms`.`id` = `booking_users`.`meet_id` where `booking_users`.`user_id` = ? and `users`.`status` = ? order by `booking_users`.`booking_id` DESC",
+          "orders": [
+            {
+              "table": "booking_users",
+              "column": "booking_id",
+              "direction": "DESC"
+            }
+          ]
+        }
+      },
+      "output": true,
+      "meta": [
+        {
+          "type": "text",
+          "name": "start_time"
+        },
+        {
+          "type": "text",
+          "name": "end_time"
+        },
+        {
+          "type": "date",
+          "name": "date"
+        },
+        {
+          "type": "text",
+          "name": "status"
+        },
+        {
+          "type": "number",
+          "name": "user_id"
+        },
+        {
+          "type": "text",
+          "name": "mroom_name"
+        },
+        {
+          "type": "number",
+          "name": "id"
+        },
+        {
+          "type": "number",
+          "name": "booking_id"
+        },
+        {
+          "type": "number",
+          "name": "time_id"
+        },
+        {
+          "type": "text",
+          "name": "book_com"
+        },
+        {
+          "type": "number",
+          "name": "meet_id"
+        }
+      ],
+      "outputType": "array"
+    }
+  }
+}

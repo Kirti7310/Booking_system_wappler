@@ -1,0 +1,216 @@
+{
+  "meta": {
+    "$_GET": [
+      {
+        "type": "text",
+        "name": "sort"
+      },
+      {
+        "type": "text",
+        "name": "dir"
+      }
+    ]
+  },
+  "exec": {
+    "steps": {
+      "name": "display_users_slot_details",
+      "module": "dbconnector",
+      "action": "select",
+      "options": {
+        "connection": "booking_db",
+        "sql": {
+          "type": "select",
+          "columns": [
+            {
+              "table": "booking_users",
+              "column": "date",
+              "aggregate": ""
+            },
+            {
+              "table": "time_slot",
+              "column": "start_time"
+            },
+            {
+              "table": "time_slot",
+              "column": "end_time"
+            },
+            {
+              "table": "booking_users",
+              "column": "booking_id"
+            },
+            {
+              "table": "booking_users",
+              "column": "status"
+            },
+            {
+              "table": "booking_users",
+              "column": "user_id"
+            },
+            {
+              "table": "time_slot",
+              "column": "time_id"
+            },
+            {
+              "table": "meeting_rooms",
+              "column": "mroom_name"
+            },
+            {
+              "table": "meeting_rooms",
+              "column": "id"
+            }
+          ],
+          "params": [],
+          "table": {
+            "name": "booking_users"
+          },
+          "primary": "booking_id",
+          "joins": [
+            {
+              "table": "time_slot",
+              "column": "*",
+              "type": "INNER",
+              "clauses": {
+                "condition": "AND",
+                "rules": [
+                  {
+                    "table": "time_slot",
+                    "column": "time_id",
+                    "operation": "=",
+                    "operator": "equal",
+                    "value": {
+                      "table": "booking_users",
+                      "column": "time_id",
+                      "type": "number"
+                    }
+                  }
+                ]
+              },
+              "primary": "time_id"
+            },
+            {
+              "table": "users",
+              "column": "*",
+              "type": "INNER",
+              "clauses": {
+                "condition": "AND",
+                "rules": [
+                  {
+                    "table": "users",
+                    "column": "user_id",
+                    "operation": "=",
+                    "operator": "equal",
+                    "value": {
+                      "table": "booking_users",
+                      "column": "user_id",
+                      "type": "number"
+                    }
+                  }
+                ]
+              },
+              "primary": "user_id"
+            },
+            {
+              "table": "meeting_rooms",
+              "column": "*",
+              "type": "INNER",
+              "clauses": {
+                "condition": "AND",
+                "rules": [
+                  {
+                    "table": "meeting_rooms",
+                    "column": "id",
+                    "operation": "=",
+                    "operator": "equal",
+                    "value": {
+                      "table": "booking_users",
+                      "column": "meet_id",
+                      "type": "number"
+                    }
+                  }
+                ]
+              },
+              "primary": "id"
+            }
+          ],
+          "wheres": {
+            "condition": "AND",
+            "rules": [
+              {
+                "id": "users.status",
+                "field": "users.status",
+                "type": "string",
+                "operator": "equal",
+                "value": "active",
+                "data": {
+                  "table": "users",
+                  "column": "status",
+                  "type": "text",
+                  "columnObj": {
+                    "type": "string",
+                    "default": "'active'",
+                    "maxLength": 20,
+                    "primary": false,
+                    "nullable": true,
+                    "name": "status"
+                  }
+                },
+                "operation": "=",
+                "table": "booking_users"
+              }
+            ],
+            "conditional": null,
+            "valid": true
+          },
+          "query": "select `booking_users`.`date`, `time_slot`.`start_time`, `time_slot`.`end_time`, `booking_users`.`booking_id`, `booking_users`.`status`, `booking_users`.`user_id`, `time_slot`.`time_id`, `meeting_rooms`.`mroom_name`, `meeting_rooms`.`id` from `booking_users` inner join `time_slot` on `time_slot`.`time_id` = `booking_users`.`time_id` inner join `users` on `users`.`user_id` = `booking_users`.`user_id` inner join `meeting_rooms` on `meeting_rooms`.`id` = `booking_users`.`meet_id` where `users`.`status` = ? order by `booking_users`.`date` ASC",
+          "orders": [
+            {
+              "table": "booking_users",
+              "column": "date",
+              "direction": "ASC"
+            }
+          ]
+        }
+      },
+      "output": true,
+      "meta": [
+        {
+          "type": "date",
+          "name": "date"
+        },
+        {
+          "type": "text",
+          "name": "start_time"
+        },
+        {
+          "type": "text",
+          "name": "end_time"
+        },
+        {
+          "type": "number",
+          "name": "booking_id"
+        },
+        {
+          "type": "text",
+          "name": "status"
+        },
+        {
+          "type": "number",
+          "name": "user_id"
+        },
+        {
+          "type": "number",
+          "name": "time_id"
+        },
+        {
+          "type": "text",
+          "name": "mroom_name"
+        },
+        {
+          "type": "number",
+          "name": "id"
+        }
+      ],
+      "outputType": "array"
+    }
+  }
+}

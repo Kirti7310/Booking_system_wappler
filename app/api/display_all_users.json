@@ -1,0 +1,178 @@
+{
+  "meta": {
+    "$_GET": [
+      {
+        "type": "text",
+        "name": "sort"
+      },
+      {
+        "type": "text",
+        "name": "dir"
+      }
+    ]
+  },
+  "exec": {
+    "steps": {
+      "name": "display_all_users",
+      "module": "dbconnector",
+      "action": "select",
+      "options": {
+        "connection": "booking_db",
+        "sql": {
+          "type": "select",
+          "columns": [
+            {
+              "table": "users",
+              "column": "username"
+            },
+            {
+              "table": "users",
+              "column": "email"
+            },
+            {
+              "table": "users",
+              "column": "role_id"
+            },
+            {
+              "table": "users",
+              "column": "gender"
+            },
+            {
+              "table": "users",
+              "column": "phone"
+            },
+            {
+              "table": "users",
+              "column": "status"
+            },
+            {
+              "table": "users",
+              "column": "user_id"
+            },
+            {
+              "table": "roles",
+              "column": "roles"
+            }
+          ],
+          "params": [],
+          "table": {
+            "name": "users"
+          },
+          "primary": "user_id",
+          "joins": [
+            {
+              "table": "roles",
+              "column": "*",
+              "type": "INNER",
+              "clauses": {
+                "condition": "AND",
+                "rules": [
+                  {
+                    "table": "roles",
+                    "column": "role_id",
+                    "operator": "equal",
+                    "operation": "=",
+                    "value": {
+                      "table": "users",
+                      "column": "role_id"
+                    }
+                  }
+                ]
+              },
+              "primary": "role_id"
+            }
+          ],
+          "wheres": {
+            "condition": "AND",
+            "rules": [
+              {
+                "id": "users.status",
+                "field": "users.status",
+                "type": "string",
+                "operator": "equal",
+                "value": "active",
+                "data": {
+                  "table": "users",
+                  "column": "status",
+                  "type": "text",
+                  "columnObj": {
+                    "type": "string",
+                    "default": "'active'",
+                    "maxLength": 20,
+                    "primary": false,
+                    "nullable": true,
+                    "name": "status"
+                  }
+                },
+                "operation": "="
+              },
+              {
+                "id": "users.role_id",
+                "field": "users.role_id",
+                "type": "double",
+                "operator": "equal",
+                "value": 2,
+                "data": {
+                  "table": "users",
+                  "column": "role_id",
+                  "type": "number",
+                  "columnObj": {
+                    "type": "reference",
+                    "primary": false,
+                    "nullable": true,
+                    "references": "role_id",
+                    "inTable": "roles",
+                    "referenceType": "integer",
+                    "onUpdate": "NO ACTION",
+                    "onDelete": "NO ACTION",
+                    "name": "role_id"
+                  }
+                },
+                "operation": "="
+              }
+            ],
+            "conditional": null,
+            "valid": true
+          },
+          "query": "select `users`.`username`, `users`.`email`, `users`.`role_id`, `users`.`gender`, `users`.`phone`, `users`.`status`, `users`.`user_id`, `roles`.`roles` from `users` inner join `roles` on `roles`.`role_id` = `users`.`role_id` where `users`.`status` = ? and `users`.`role_id` = ?"
+        }
+      },
+      "output": true,
+      "meta": [
+        {
+          "type": "text",
+          "name": "username"
+        },
+        {
+          "type": "text",
+          "name": "email"
+        },
+        {
+          "type": "number",
+          "name": "role_id"
+        },
+        {
+          "type": "text",
+          "name": "gender"
+        },
+        {
+          "type": "text",
+          "name": "phone"
+        },
+        {
+          "type": "text",
+          "name": "status"
+        },
+        {
+          "type": "number",
+          "name": "user_id"
+        },
+        {
+          "type": "text",
+          "name": "roles"
+        }
+      ],
+      "outputType": "array"
+    }
+  }
+}

@@ -1,0 +1,47 @@
+{
+  "name": "login_details_sp",
+  "module": "auth",
+  "action": "provider",
+  "options": {
+    "secret": "E4UXnZmxnXZvpin",
+    "provider": "Database",
+    "connection": "booking_db",
+    "passwordVerify": true,
+    "users": {
+      "table": "users",
+      "identity": "user_id",
+      "username": "email",
+      "password": "password"
+    },
+    "permissions": {
+      "admin": {
+        "table": "users",
+        "identity": "user_id",
+        "conditions": [
+          {
+            "column": "role_id",
+            "operator": "=",
+            "value": "1"
+          }
+        ]
+      },
+      "users": {
+        "table": "users",
+        "identity": "user_id",
+        "conditions": [
+          {
+            "column": "role_id",
+            "operator": "=",
+            "value": "2"
+          }
+        ]
+      }
+    }
+  },
+  "meta": [
+    {
+      "name": "identity",
+      "type": "text"
+    }
+  ]
+}

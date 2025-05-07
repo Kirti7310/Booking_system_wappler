@@ -1,0 +1,22 @@
+{
+  "dashboard.ejs": {
+    "layoutPage": "main",
+    "description": ""
+  },
+  "users_admin.ejs": {
+    "layoutPage": "main",
+    "description": ""
+  },
+  "booking_admin_side.ejs": {
+    "layoutPage": "main",
+    "description": ""
+  },
+  "meeting_rooms.ejs": {
+    "layoutPage": "main",
+    "description": ""
+  },
+  "email_form.ejs": {
+    "layoutPage": "main",
+    "description": ""
+  }
+}

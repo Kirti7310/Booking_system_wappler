@@ -1,0 +1,419 @@
+{
+  "meta": {
+    "$_GET": [
+      {
+        "type": "text",
+        "name": "sort"
+      },
+      {
+        "type": "text",
+        "name": "dir"
+      }
+    ],
+    "$_POST": [
+      {
+        "type": "date",
+        "fieldName": "date",
+        "options": {
+          "rules": {
+            "core:required": {}
+          }
+        },
+        "name": "date"
+      },
+      {
+        "type": "text",
+        "fieldName": "time_id",
+        "options": {
+          "rules": {
+            "core:required": {}
+          }
+        },
+        "name": "time_id"
+      },
+      {
+        "type": "number",
+        "fieldName": "user_id",
+        "options": {
+          "rules": {
+            "core:required": {}
+          }
+        },
+        "name": "user_id"
+      },
+      {
+        "type": "number",
+        "fieldName": "meet_id",
+        "options": {
+          "rules": {
+            "core:required": {}
+          }
+        },
+        "name": "meet_id"
+      },
+      {
+        "type": "number",
+        "fieldName": "booking_id",
+        "name": "booking_id"
+      },
+      {
+        "type": "text",
+        "fieldName": "status",
+        "name": "status"
+      },
+      {
+        "type": "text",
+        "fieldName": "book_com",
+        "name": "book_com"
+      }
+    ]
+  },
+  "exec": {
+    "steps": [
+      {
+        "name": "booking_limits_table_query",
+        "module": "dbconnector",
+        "action": "select",
+        "options": {
+          "connection": "booking_db",
+          "sql": {
+            "type": "select",
+            "columns": [
+              {
+                "table": "booking_limits",
+                "column": "max_hrs_per_day",
+                "alias": "max_limit"
+              },
+              {
+                "table": "booking_limits",
+                "column": "max_hrs_per_week",
+                "alias": "max_limit_week"
+              }
+            ],
+            "params": [],
+            "table": {
+              "name": "booking_limits"
+            },
+            "primary": "id",
+            "joins": [],
+            "query": "select `max_hrs_per_day` as `max_limit`, `max_hrs_per_week` as `max_limit_week` from `booking_limits`"
+          }
+        },
+        "meta": [
+          {
+            "type": "number",
+            "name": "max_limit"
+          },
+          {
+            "type": "number",
+            "name": "max_limit_week"
+          }
+        ],
+        "outputType": "array"
+      },
+      {
+        "name": "booking_limits_query",
+        "module": "dbupdater",
+        "action": "custom",
+        "options": {
+          "connection": "booking_db",
+          "sql": {
+            "query": "SELECT \n    COUNT(time_slot.hour) AS time,\n    booking_users.date as Date , \n    booking_users.user_id AS user_id,\n    users.username as username\nFROM \n    booking_users\nINNER JOIN time_slot ON booking_users.time_id = time_slot.time_id\nINNER JOIN users ON booking_users.user_id = users.user_id\nwhere users.user_id = :user_id and booking_users.date = :date\nGROUP BY \n    booking_users.date, booking_users.user_id;",
+            "params": [
+              {
+                "name": ":user_id",
+                "value": "{{$_POST.user_id}}"
+              },
+              {
+                "name": ":date",
+                "value": "{{$_POST.date}}"
+              }
+            ]
+          }
+        },
+        "output": true,
+        "meta": [
+          {
+            "name": "time",
+            "type": "number"
+          },
+          {
+            "name": "Date",
+            "type": "date"
+          },
+          {
+            "name": "user_id",
+            "type": "number"
+          },
+          {
+            "name": "username",
+            "type": "text"
+          }
+        ],
+        "outputType": "array"
+      },
+      {
+        "name": "booking_limit_query_weekly",
+        "module": "dbupdater",
+        "action": "custom",
+        "options": {
+          "connection": "booking_db",
+          "sql": {
+            "query": "SELECT \n    COUNT(*) AS total_week_slots\nFROM \n    booking_users\nINNER JOIN time_slot ON booking_users.time_id = time_slot.time_id\nINNER JOIN users ON booking_users.user_id = users.user_id\nWHERE \n    users.user_id = :user_id \n    AND YEARWEEK(booking_users.date) = YEARWEEK(:date)\nGROUP BY \n    booking_users.user_id;\n    \n    \n    \n    \n   ",
+            "params": [
+              {
+                "name": ":date",
+                "value": "{{$_POST.date}}",
+                "test": ""
+              },
+              {
+                "name": ":user_id",
+                "value": "{{$_POST.user_id}}"
+              }
+            ]
+          }
+        },
+        "output": true,
+        "meta": [
+          {
+            "name": "total_week_slots",
+            "type": "number"
+          }
+        ],
+        "outputType": "array"
+      },
+      {
+        "name": "max_hrs_per_week",
+        "module": "core",
+        "action": "setvalue",
+        "options": {
+          "key": "max_hrs_per_week",
+          "value": "{{booking_limit_query_weekly[0].total_week_slots}}"
+        },
+        "meta": [],
+        "outputType": "number"
+      },
+      {
+        "name": "",
+        "module": "core",
+        "action": "condition",
+        "options": {
+          "if": "{{(max_hrs_per_week+1)<=booking_limits_table_query[0].max_limit_week}}",
+          "then": {
+            "steps": [
+              {
+                "name": "max_hrs_day",
+                "module": "core",
+                "action": "setvalue",
+                "options": {
+                  "key": "max_hrs_day",
+                  "value": "{{booking_limits_query[0].time}}"
+                },
+                "meta": [],
+                "outputType": "number"
+              },
+              {
+                "name": "",
+                "module": "core",
+                "action": "condition",
+                "options": {
+                  "if": "{{(max_hrs_day+1)<=booking_limits_table_query[0].max_limit}}",
+                  "then": {
+                    "steps": {
+                      "name": "",
+                      "module": "core",
+                      "action": "condition",
+                      "options": {
+                        "if": "{{$_POST.booking_id>=1}}",
+                        "then": {
+                          "steps": {
+                            "name": "admin_users_bookingslots",
+                            "module": "dbupdater",
+                            "action": "custom",
+                            "options": {
+                              "connection": "booking_db",
+                              "sql": {
+                                "query": "UPDATE booking_users\nJOIN users ON users.user_id = booking_users.user_id\nJOIN time_slot ON time_slot.time_id = booking_users.time_id\nJOIN meeting_rooms On meeting_rooms.id = booking_users.meet_id\nSET \n  booking_users.date = :date,\n  booking_users.time_id = :time_id, \n  booking_users.user_id = :user_id,\n  booking_users.status = :status,\n  booking_users.meet_id = :meet_id\nWHERE booking_users.booking_id = :booking_id",
+                                "params": [
+                                  {
+                                    "name": ":date",
+                                    "value": "{{$_POST.date}}",
+                                    "recid": 1
+                                  },
+                                  {
+                                    "name": ":time_id",
+                                    "value": "{{$_POST.time_id}}",
+                                    "recid": 2
+                                  },
+                                  {
+                                    "name": ":user_id",
+                                    "value": "{{$_POST.user_id}}",
+                                    "recid": 3
+                                  },
+                                  {
+                                    "name": ":status",
+                                    "value": "{{$_POST.status}}",
+                                    "recid": 4
+                                  },
+                                  {
+                                    "name": ":booking_id",
+                                    "value": "{{$_POST.booking_id}}",
+                                    "recid": 5
+                                  },
+                                  {
+                                    "name": ":meet_id",
+                                    "value": "{{$_POST.meet_id}}",
+                                    "recid": 6
+                                  }
+                                ]
+                              }
+                            },
+                            "output": true,
+                            "meta": [],
+                            "outputType": "array"
+                          }
+                        },
+                        "else": {
+                          "steps": [
+                            {
+                              "name": "insert_new_slotdetails",
+                              "module": "dbupdater",
+                              "action": "insert",
+                              "options": {
+                                "connection": "booking_db",
+                                "sql": {
+                                  "type": "insert",
+                                  "values": [
+                                    {
+                                      "table": "booking_users",
+                                      "column": "user_id",
+                                      "type": "number",
+                                      "value": "{{$_POST.user_id}}"
+                                    },
+                                    {
+                                      "table": "booking_users",
+                                      "column": "date",
+                                      "type": "date",
+                                      "value": "{{$_POST.date}}"
+                                    },
+                                    {
+                                      "table": "booking_users",
+                                      "column": "time_id",
+                                      "type": "number",
+                                      "value": "{{$_POST.time_id}}"
+                                    },
+                                    {
+                                      "table": "booking_users",
+                                      "column": "meet_id",
+                                      "type": "number",
+                                      "value": "{{$_POST.meet_id}}"
+                                    },
+                                    {
+                                      "table": "booking_users",
+                                      "column": "book_com",
+                                      "type": "text",
+                                      "value": "{{$_POST.book_com}}"
+                                    }
+                                  ],
+                                  "table": "booking_users",
+                                  "returning": "booking_id",
+                                  "query": "insert into `booking_users` (`book_com`, `date`, `meet_id`, `time_id`, `user_id`) values (?, ?, ?, ?, ?)",
+                                  "params": [
+                                    {
+                                      "name": ":P1",
+                                      "type": "expression",
+                                      "value": "{{$_POST.user_id}}",
+                                      "test": ""
+                                    },
+                                    {
+                                      "name": ":P2",
+                                      "type": "expression",
+                                      "value": "{{$_POST.date}}",
+                                      "test": ""
+                                    },
+                                    {
+                                      "name": ":P3",
+                                      "type": "expression",
+                                      "value": "{{$_POST.time_id}}",
+                                      "test": ""
+                                    },
+                                    {
+                                      "name": ":P4",
+                                      "type": "expression",
+                                      "value": "{{$_POST.meet_id}}",
+                                      "test": ""
+                                    },
+                                    {
+                                      "name": ":P5",
+                                      "type": "expression",
+                                      "value": "{{$_POST.book_com}}",
+                                      "test": ""
+                                    }
+                                  ]
+                                }
+                              },
+                              "meta": [
+                                {
+                                  "name": "identity",
+                                  "type": "text"
+                                },
+                                {
+                                  "name": "affected",
+                                  "type": "number"
+                                }
+                              ],
+                              "output": true
+                            },
+                            {
+                              "name": "",
+                              "module": "mail",
+                              "action": "send",
+                              "options": {
+                                "instance": "user_confirm_mail",
+                                "subject": "booking_confirmation",
+                                "toName": "kirti",
+                                "toEmail": "karaurkarkirti@gmail.com",
+                                "body": "<p data-start=\"124\" data-end=\"134\" class=\"\">Dear User,</p><p data-start=\"136\" data-end=\"360\" class=\"\">Your booking details have been successfully submitted.<br data-start=\"190\" data-end=\"193\"> The approval process may take some time, so we kindly ask for your patience.<br data-start=\"269\" data-end=\"272\"> Currently, your booking status is <span data-start=\"306\" data-end=\"317\">pending</span>. You will be notified once it is reviewed.</p><p data-start=\"362\" data-end=\"397\" class=\"\">Thank you for choosing our service.</p>",
+                                "contentType": "html",
+                                "fromEmail": "{{$_POST.user_id}}",
+                                "fromName": "kirti"
+                              }
+                            }
+                          ]
+                        }
+                      },
+                      "outputType": "boolean"
+                    }
+                  },
+                  "else": {
+                    "steps": {
+                      "name": "",
+                      "module": "core",
+                      "action": "error",
+                      "options": {
+                        "message": "User Can't Exceed Above 4 hrs /Day :\\"
+                      }
+                    }
+                  }
+                },
+                "outputType": "boolean",
+                "output": true
+              }
+            ]
+          },
+          "else": {
+            "steps": {
+              "name": "",
+              "module": "core",
+              "action": "error",
+              "options": {
+                "message": "CAN'T ALLOW FOR 8/HR FOR A WEEK BOOKING :\\"
+              }
+            }
+          }
+        },
+        "outputType": "boolean"
+      }
+    ]
+  }
+}

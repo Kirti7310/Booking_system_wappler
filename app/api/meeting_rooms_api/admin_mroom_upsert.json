@@ -1,0 +1,159 @@
+{
+  "meta": {
+    "$_POST": [
+      {
+        "type": "text",
+        "fieldName": "mroom_name",
+        "name": "mroom_name"
+      },
+      {
+        "type": "text",
+        "fieldName": "mdesc",
+        "name": "mdesc"
+      },
+      {
+        "type": "number",
+        "fieldName": "room_id",
+        "name": "id"
+      }
+    ]
+  },
+  "exec": {
+    "steps": {
+      "name": "",
+      "module": "core",
+      "action": "condition",
+      "options": {
+        "if": "{{$_POST.id>=1}}",
+        "then": {
+          "steps": {
+            "name": "admin_mrooms_update",
+            "module": "dbupdater",
+            "action": "update",
+            "options": {
+              "connection": "booking_db",
+              "sql": {
+                "type": "update",
+                "values": [
+                  {
+                    "table": "meeting_rooms",
+                    "column": "mroom_name",
+                    "type": "text",
+                    "value": "{{$_POST.mroom_name}}"
+                  },
+                  {
+                    "table": "meeting_rooms",
+                    "column": "mdesc",
+                    "type": "text",
+                    "value": "{{$_POST.mdesc}}"
+                  }
+                ],
+                "table": "meeting_rooms",
+                "wheres": {
+                  "condition": "AND",
+                  "rules": [
+                    {
+                      "id": "id",
+                      "type": "double",
+                      "operator": "equal",
+                      "value": "{{$_POST.id}}",
+                      "data": {
+                        "column": "id"
+                      },
+                      "operation": "="
+                    }
+                  ]
+                },
+                "returning": "id",
+                "query": "update `meeting_rooms` set `mroom_name` = ?, `mdesc` = ? where `id` = ?",
+                "params": [
+                  {
+                    "name": ":P1",
+                    "type": "expression",
+                    "value": "{{$_POST.mroom_name}}",
+                    "test": ""
+                  },
+                  {
+                    "name": ":P2",
+                    "type": "expression",
+                    "value": "{{$_POST.mdesc}}",
+                    "test": ""
+                  },
+                  {
+                    "operator": "equal",
+                    "type": "expression",
+                    "name": ":P3",
+                    "value": "{{$_POST.id}}",
+                    "test": ""
+                  }
+                ]
+              }
+            },
+            "meta": [
+              {
+                "name": "affected",
+                "type": "number"
+              }
+            ]
+          }
+        },
+        "else": {
+          "steps": {
+            "name": "admin_mroom_insert",
+            "module": "dbupdater",
+            "action": "insert",
+            "options": {
+              "connection": "booking_db",
+              "sql": {
+                "type": "insert",
+                "values": [
+                  {
+                    "table": "meeting_rooms",
+                    "column": "mroom_name",
+                    "type": "text",
+                    "value": "{{$_POST.mroom_name}}"
+                  },
+                  {
+                    "table": "meeting_rooms",
+                    "column": "mdesc",
+                    "type": "text",
+                    "value": "{{$_POST.mdesc}}"
+                  }
+                ],
+                "table": "meeting_rooms",
+                "returning": "id",
+                "query": "insert into `meeting_rooms` (`mdesc`, `mroom_name`) values (?, ?)",
+                "params": [
+                  {
+                    "name": ":P1",
+                    "type": "expression",
+                    "value": "{{$_POST.mroom_name}}",
+                    "test": ""
+                  },
+                  {
+                    "name": ":P2",
+                    "type": "expression",
+                    "value": "{{$_POST.mdesc}}",
+                    "test": ""
+                  }
+                ]
+              }
+            },
+            "meta": [
+              {
+                "name": "identity",
+                "type": "text"
+              },
+              {
+                "name": "affected",
+                "type": "number"
+              }
+            ],
+            "output": true
+          }
+        }
+      },
+      "outputType": "boolean"
+    }
+  }
+}

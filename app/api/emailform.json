@@ -1,0 +1,27 @@
+{
+  "meta": {
+    "$_POST": [
+      {
+        "type": "text",
+        "fieldName": "email",
+        "name": "email"
+      }
+    ]
+  },
+  "exec": {
+    "steps": {
+      "name": "",
+      "module": "mail",
+      "action": "send",
+      "options": {
+        "instance": "user_confirm_mail",
+        "subject": "mailform",
+        "fromName": "{{$_POST.email}}",
+        "fromEmail": "{{$_POST.email}}",
+        "toName": "kirti",
+        "toEmail": "karapurkarkirti@gmail.com",
+        "body": "hey there e!.."
+      }
+    }
+  }
+}

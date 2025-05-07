@@ -1,0 +1,231 @@
+{
+  "meta": {
+    "$_GET": [
+      {
+        "type": "text",
+        "name": "sort"
+      },
+      {
+        "type": "text",
+        "name": "dir"
+      }
+    ],
+    "$_POST": [
+      {
+        "type": "date",
+        "fieldName": "date",
+        "options": {
+          "rules": {
+            "core:required": {}
+          }
+        },
+        "name": "date"
+      },
+      {
+        "type": "text",
+        "fieldName": "time_id",
+        "options": {
+          "rules": {
+            "core:required": {}
+          }
+        },
+        "name": "time_id"
+      },
+      {
+        "type": "number",
+        "fieldName": "user_id",
+        "options": {
+          "rules": {
+            "core:required": {}
+          }
+        },
+        "name": "user_id"
+      },
+      {
+        "type": "number",
+        "fieldName": "meet_id",
+        "options": {
+          "rules": {
+            "core:required": {}
+          }
+        },
+        "name": "meet_id"
+      },
+      {
+        "type": "number",
+        "fieldName": "booking_id",
+        "name": "booking_id"
+      },
+      {
+        "type": "text",
+        "fieldName": "status",
+        "name": "status"
+      },
+      {
+        "type": "text",
+        "fieldName": "book_com",
+        "name": "book_com"
+      }
+    ]
+  },
+  "exec": {
+    "steps": {
+      "name": "",
+      "module": "core",
+      "action": "condition",
+      "options": {
+        "if": "{{$_POST.booking_id>=1}}",
+        "then": {
+          "steps": {
+            "name": "admin_users_bookingslots",
+            "module": "dbupdater",
+            "action": "custom",
+            "options": {
+              "connection": "booking_db",
+              "sql": {
+                "query": "UPDATE booking_users\nJOIN users ON users.user_id = booking_users.user_id\nJOIN time_slot ON time_slot.time_id = booking_users.time_id\nJOIN meeting_rooms On meeting_rooms.id = booking_users.meet_id\nSET \n  booking_users.date = :date,\n  booking_users.time_id = :time_id, \n  booking_users.user_id = :user_id,\n  booking_users.status = :status,\n  booking_users.book_com= :book_com,\n  booking_users.meet_id = :meet_id\nWHERE booking_users.booking_id = :booking_id",
+                "params": [
+                  {
+                    "name": ":date",
+                    "value": "{{$_POST.date}}"
+                  },
+                  {
+                    "name": ":time_id",
+                    "value": "{{$_POST.time_id}}"
+                  },
+                  {
+                    "name": ":user_id",
+                    "value": "{{$_POST.user_id}}"
+                  },
+                  {
+                    "name": ":status",
+                    "value": "{{$_POST.status}}"
+                  },
+                  {
+                    "name": ":booking_id",
+                    "value": "{{$_POST.booking_id}}"
+                  },
+                  {
+                    "name": ":meet_id",
+                    "value": "{{$_POST.meet_id}}"
+                  },
+                  {
+                    "name": ":book_com",
+                    "value": "{{$_POST.book_com}}"
+                  }
+                ]
+              }
+            },
+            "output": true,
+            "meta": [],
+            "outputType": "array"
+          }
+        },
+        "else": {
+          "steps": {
+            "name": "insert_new_slotdetails",
+            "module": "dbupdater",
+            "action": "insert",
+            "options": {
+              "connection": "booking_db",
+              "sql": {
+                "type": "insert",
+                "values": [
+                  {
+                    "table": "booking_users",
+                    "column": "user_id",
+                    "type": "number",
+                    "value": "{{$_POST.user_id}}"
+                  },
+                  {
+                    "table": "booking_users",
+                    "column": "date",
+                    "type": "date",
+                    "value": "{{$_POST.date}}"
+                  },
+                  {
+                    "table": "booking_users",
+                    "column": "time_id",
+                    "type": "number",
+                    "value": "{{$_POST.time_id}}"
+                  },
+                  {
+                    "table": "booking_users",
+                    "column": "meet_id",
+                    "type": "number",
+                    "value": "{{$_POST.meet_id}}"
+                  },
+                  {
+                    "table": "booking_users",
+                    "column": "book_com",
+                    "type": "text",
+                    "value": "{{$_POST.book_com}}"
+                  },
+                  {
+                    "table": "booking_users",
+                    "column": "status",
+                    "type": "text",
+                    "value": "{{$_POST.status}}"
+                  }
+                ],
+                "table": "booking_users",
+                "returning": "booking_id",
+                "query": "insert into `booking_users` (`book_com`, `date`, `meet_id`, `status`, `time_id`, `user_id`) values (?, ?, ?, ?, ?, ?)",
+                "params": [
+                  {
+                    "name": ":P1",
+                    "type": "expression",
+                    "value": "{{$_POST.user_id}}",
+                    "test": ""
+                  },
+                  {
+                    "name": ":P2",
+                    "type": "expression",
+                    "value": "{{$_POST.date}}",
+                    "test": ""
+                  },
+                  {
+                    "name": ":P3",
+                    "type": "expression",
+                    "value": "{{$_POST.time_id}}",
+                    "test": ""
+                  },
+                  {
+                    "name": ":P4",
+                    "type": "expression",
+                    "value": "{{$_POST.meet_id}}",
+                    "test": ""
+                  },
+                  {
+                    "name": ":P5",
+                    "type": "expression",
+                    "value": "{{$_POST.book_com}}",
+                    "test": ""
+                  },
+                  {
+                    "name": ":P6",
+                    "type": "expression",
+                    "value": "{{$_POST.status}}",
+                    "test": ""
+                  }
+                ]
+              }
+            },
+            "meta": [
+              {
+                "name": "identity",
+                "type": "text"
+              },
+              {
+                "name": "affected",
+                "type": "number"
+              }
+            ],
+            "output": true
+          }
+        }
+      },
+      "outputType": "boolean"
+    }
+  }
+}

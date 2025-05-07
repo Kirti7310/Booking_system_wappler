@@ -1,0 +1,51 @@
+{
+  "meta": {
+    "$_GET": [
+      {
+        "type": "text",
+        "name": "sort"
+      },
+      {
+        "type": "text",
+        "name": "dir"
+      }
+    ]
+  },
+  "exec": {
+    "steps": {
+      "name": "display_time",
+      "module": "dbconnector",
+      "action": "select",
+      "options": {
+        "connection": "booking_db",
+        "sql": {
+          "type": "select",
+          "columns": [
+            {
+              "table": "time_slot",
+              "column": "start_time"
+            },
+            {
+              "table": "time_slot",
+              "column": "end_time"
+            },
+            {
+              "table": "time_slot",
+              "column": "time_id"
+            }
+          ],
+          "params": [],
+          "table": {
+            "name": "time_slot"
+          },
+          "primary": "time_id",
+          "joins": [],
+          "query": "select `start_time`, `end_time`, `time_id` from `time_slot`"
+        }
+      },
+      "output": true,
+      "meta": [],
+      "outputType": "array"
+    }
+  }
+}

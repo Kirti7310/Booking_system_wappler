@@ -1,0 +1,173 @@
+{
+  "meta": {
+    "$_GET": [
+      {
+        "type": "text",
+        "name": "sort"
+      },
+      {
+        "type": "text",
+        "name": "dir"
+      }
+    ],
+    "$_POST": [
+      {
+        "type": "number",
+        "fieldName": "time_id",
+        "name": "time_id"
+      },
+      {
+        "type": "number",
+        "fieldName": "user_id",
+        "name": "user_id"
+      },
+      {
+        "type": "number",
+        "fieldName": "booking_id",
+        "name": "booking_id"
+      },
+      {
+        "type": "text",
+        "fieldName": "status",
+        "name": "status"
+      },
+      {
+        "type": "text",
+        "fieldName": "book_com",
+        "name": "book_com"
+      },
+      {
+        "type": "number",
+        "fieldName": "meet_id",
+        "name": "meet_id"
+      },
+      {
+        "type": "date",
+        "fieldName": "date",
+        "name": "date"
+      }
+    ]
+  },
+  "exec": {
+    "steps": [
+      {
+        "name": "select_slots_records",
+        "module": "dbupdater",
+        "action": "custom",
+        "options": {
+          "connection": "booking_db",
+          "sql": {
+            "query": "SELECT COUNT(booking_users.booking_id) AS booking_count\nFROM booking_users\nINNER JOIN time_slot ON booking_users.time_id = time_slot.time_id\nWHERE booking_users.booking_id = :booking_id\n  AND booking_users.user_id = :user_id\n  AND booking_users.time_id = :time_id\n  AND CURDATE() = booking_users.date\n  AND NOW() BETWEEN STR_TO_DATE(CONCAT(booking_users.date, ' ', time_slot.start_time), '%Y-%m-%d %h:%i %p')\n               AND STR_TO_DATE(CONCAT(booking_users.date, ' ', time_slot.end_time), '%Y-%m-%d %h:%i %p')\nGROUP BY booking_users.booking_id;",
+            "params": [
+              {
+                "name": ":booking_id",
+                "value": "{{$_POST.booking_id}}"
+              },
+              {
+                "name": ":user_id",
+                "value": "{{$_POST.user_id}}"
+              },
+              {
+                "name": ":time_id",
+                "value": "{{$_POST.time_id}}"
+              }
+            ]
+          }
+        },
+        "output": true,
+        "meta": [
+          {
+            "name": "booking_count",
+            "type": "number"
+          }
+        ],
+        "outputType": "array",
+        "disabled": true
+      },
+      {
+        "name": "",
+        "module": "core",
+        "action": "condition",
+        "options": {
+          "if": "{{select_slots_records[0].booking_count>=1}}",
+          "then": {
+            "steps": {
+              "name": "",
+              "module": "core",
+              "action": "error",
+              "options": {
+                "message": "The Bookings Can't be Updated!"
+              }
+            }
+          },
+          "else": {
+            "steps": [
+              {
+                "name": "update_query",
+                "module": "dbupdater",
+                "action": "custom",
+                "options": {
+                  "connection": "booking_db",
+                  "sql": {
+                    "query": "UPDATE booking_users\nJOIN users ON users.user_id = booking_users.user_id\nJOIN time_slot ON time_slot.time_id = booking_users.time_id\nSET \n  booking_users.date = :date,\n  booking_users.time_id = :time_id, \n  booking_users.meet_id = :meet_id,\n  booking_users.status = :status,\n  booking_users.book_com = :book_com\nWHERE booking_users.booking_id = :booking_id",
+                    "params": [
+                      {
+                        "name": ":date",
+                        "value": "{{$_POST.date}}",
+                        "recid": 1
+                      },
+                      {
+                        "name": ":time_id",
+                        "value": "{{$_POST.time_id}}",
+                        "recid": 2
+                      },
+                      {
+                        "name": ":meet_id",
+                        "value": "{{$_POST.meet_id}}",
+                        "recid": 3
+                      },
+                      {
+                        "name": ":status",
+                        "value": "{{$_POST.status}}",
+                        "recid": 4
+                      },
+                      {
+                        "name": ":book_com",
+                        "value": "{{$_POST.book_com}}",
+                        "recid": 5
+                      },
+                      {
+                        "name": ":booking_id",
+                        "value": "{{$_POST.booking_id}}",
+                        "recid": 6
+                      }
+                    ]
+                  }
+                },
+                "output": true,
+                "meta": [],
+                "outputType": "array"
+              },
+              {
+                "name": "",
+                "module": "mail",
+                "action": "send",
+                "options": {
+                  "instance": "user_confirm_mail",
+                  "fromName": "Kirti",
+                  "fromEmail": "{{$_POST.user_id}}",
+                  "toName": "kirti",
+                  "toEmail": "kirticrx@gmail.com",
+                  "body": "Dear User,&nbsp;<p>&nbsp;Your details have been successfully updated. Current Status: {{$_POST.status}}&nbsp;</p><p><br></p><p>&nbsp;Thank you and regards,&nbsp;</p><p>The Team</p>",
+                  "contentType": "html",
+                  "subject": "status_update"
+                }
+              }
+            ]
+          }
+        },
+        "outputType": "boolean"
+      }
+    ]
+  }
+}

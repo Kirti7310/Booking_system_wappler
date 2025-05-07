@@ -1,0 +1,314 @@
+<!-- Wappler include head-page="layouts/main" is="dmx-app" id="users_admin" appConnect="local" bootstrap5="cdn" jquery_35="cdn" fontawesome_4="cdn" components="{dmxSwiper:{},dmxDataTraversal:{},dmxBootstrap5TableGenerator:{},dmxBootstrap5Collapse:{},dmxNotifications:{},dmxBrowser:{},dmxValidator:{},dmxBootstrap5Modal:{}}" -->
+<dmx-api-action id="deleteusers_admin" noload="true" url="/api/admin_delete_users" method="post" dmx-data:user_id="serverconnectform3.user_id.value" dmx-on:success="upsert_action.serverconnectform4.reset();Display_all_users.load({});delete_msg_modal.toggle()" data-type="json"></dmx-api-action>
+<dmx-api-action id="admin_user_updatedetails" noload="true" url="/api/upsert_action/admin_users_upsert" method="post" data-type="json" dmx-data:username="upsert_action.serverconnectform4.inp_username.value" dmx-data:email="upsert_action.serverconnectform4.inp_email.value" dmx-data:role_id="upsert_action.serverconnectform4.inp_role_id.value" dmx-data:gender="upsert_action.serverconnectform4.inp_gender.value" dmx-data:phone="upsert_action.serverconnectform4.inp_phone.value" dmx-data:status="upsert_action.serverconnectform4.inp_status.value" dmx-data:user_id="upsert_action.serverconnectform4.inp_user_id.value"></dmx-api-action>
+<dmx-serverconnect id="users_confirm_email"></dmx-serverconnect>
+<div class="modal fade" id="success_msg_modal" is="dmx-bs5-modal" tabindex="-1">
+    <div class="modal-dialog" role="document">
+        <div class="modal-content">
+            <div class="modal-header text-bg-success">
+                <h5 class="modal-title">Success!</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                <p>Profile updated!</p>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-primary text-bg-success" dmx-on:click="success_msg_modal.hide();upsert_action.hide()">OK</button>
+            </div>
+        </div>
+    </div>
+</div>
+<div class="modal fade" id="delete_msg_modal" is="dmx-bs5-modal" tabindex="-1">
+    <div class="modal-dialog" role="document">
+        <div class="modal-content">
+            <div class="modal-header text-bg-success">
+                <h5 class="modal-title">Success!</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                <p>User Got Deleted Successful!</p>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-primary text-bg-success" dmx-on:click="delete_msg_modal.hide()">OK</button>
+            </div>
+        </div>
+    </div>
+</div>
+<div class="modal fade" id="error_msg_modal" is="dmx-bs5-modal" tabindex="-1">
+    <div class="modal-dialog" role="document">
+        <div class="modal-content">
+            <div class="modal-header text-bg-danger">
+                <h5 class="modal-title">Error :\</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                <p>❌ Oops! Something went wrong updating the user.</p>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-primary bg-danger" dmx-on:click="error_msg_modal.hide();upsert_action.hide()">OK</button>
+            </div>
+        </div>
+    </div>
+</div>
+<dmx-value id="form_mode_update" dmx-bind:value="'upd'"></dmx-value>
+<dmx-value id="form_mode" dmx-bind:value="'add'"></dmx-value>
+<dmx-value id="selected_user"></dmx-value>
+
+<dmx-browser id="browser1"></dmx-browser>
+<dmx-notifications id="notifies1"></dmx-notifications>
+
+<meta name="ac:route" content="/admin/users_admin">
+
+<div class="container py-4">
+    <div class="row mb-4">
+        <div class="col text-center">
+            <h3 class="text-white bg-success py-2 rounded shadow-sm rounded-pill">User Management Panel</h3>
+        </div>
+    </div>
+
+    <!-- User Table -->
+    <div class="card shadow-sm rounded-4 border-0 mb-4">
+        <div class="card-body">
+            <h5 class="card-title mb-3">All Registered Users</h5>
+            <!-- <div class="table-responsive">
+                <table class="table table-hover table-bordered align-middle">
+                    <thead class="table-light">
+                        <tr>
+                            <th>Username</th>
+                            <th>Email</th>
+                            <th>Role</th>
+                            <th>Gender</th>
+                            <th>Phone</th>
+                            <th>Status</th>
+                            <th>User ID</th>
+                        </tr>
+                    </thead>
+                    <tbody is="dmx-repeat" dmx-bind:repeat="Display_all_users.data.display_all_users" id="tableRepeat1">
+                        <tr dmx-on:click="users_details.select(user_id)" class="cursor-pointer">
+                            <td dmx-text="username" dmx-class:bg-light="user_id==users_details.data.user_id" dmx-on:click="selected_user.setValue(user_id)"></td>
+                            <td dmx-text="email"></td>
+                            <td dmx-text="role_id"></td>
+                            <td dmx-text="gender"></td>
+                            <td dmx-text="phone"></td>
+                            <td dmx-text="status"></td>
+                            <td dmx-text="user_id"></td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div> -->
+
+            <div class="table-responsive">
+                <table class="table table-hover table-bordered align-middle text-center shadow-sm rounded">
+                    <thead class="text-dark table-dark">
+                        <tr>
+                            <th>User ID</th>
+                            <th>Username</th>
+                            <th>Email</th>
+                            <th>Role</th>
+                            <th>Gender</th>
+                            <th>Phone</th>
+                            <th>Status</th>
+                            <th colspan="2" class="text-center">Modify</th>
+
+                        </tr>
+                    </thead>
+                    <tbody is="dmx-repeat" dmx-bind:repeat="Display_all_users.data.display_all_users" id="tableRepeat1">
+                        <tr dmx-on:click="users_details.select(user_id)" class="cursor-pointer">
+                            <td dmx-text="user_id" dmx-class:bg-light="user_id==users_details.data.user_id" dmx-on:click="selected_user.setValue(user_id)"></td>
+                            <td dmx-text="username" dmx-class:bg-light="user_id==users_details.data.user_id" dmx-on:click="selected_user.setValue(user_id)"></td>
+                            <td dmx-text="email"></td>
+                            <td dmx-text="roles"></td>
+                            <td dmx-text="gender"></td>
+                            <td dmx-text="phone"></td>
+                            <td dmx-text="status"></td>
+                            <td>
+                                <button class="btn btn-sm btn-outline-success rounded-pill px-3" dmx-on:click="users_details.select(user_id);form_mode.setValue('update')">
+                                    Update
+                                </button>
+                            </td>
+                            <td>
+                                <button class="btn btn-sm btn-outline-danger rounded-pill px-3" dmx-on:click="deleteusers_admin.load({})">
+                                    Delete
+                                </button>
+                            </td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+
+
+            <!-- <div class="d-flex gap-3 mt-3 text-light">
+                <button class="btn btn-outline-primary rounded-pill" dmx-on:click="form_mode.setValue('add');upsert_action.serverconnectform4.reset();upsert_action.show()">Add NewUser</button><button class="btn btn-outline-secondary bg-secondary text-black rounded-pill" dmx-on:click="form_mode.setValue('update');upsert_action.show()" dmx-bind:disabled="!selected_user.value">Modify Details</button><button class="btn btn-outline-danger bg-danger text-light  rounded-pill" dmx-on:click="serverconnectform3.submit()" dmx-bind:disabled="!selected_user.value">Delete User</button>
+
+
+            </div> -->
+        </div>
+    </div>
+
+    <!-- Add User Form -->
+    <div class="collapse mb-4" id="add_user_collapse" is="dmx-bs5-collapse">
+        <div class="card shadow rounded-4 border-0">
+            <div class="card-body">
+                <h5 class="card-title">Add New User</h5>
+                <form is="dmx-serverconnect-form" id="serverconnectform1" method="post" action="/api/admin_add_users" class="pt-3" dmx-on:success="notifies1.success('User Added!');serverconnectform1.reset(true);Display_all_users.load({})" dmx-on:error="notifies1.warning('Oops User Can\'t Be Added :\\')">
+                    <div class="row g-3">
+                        <div class="col-md-6">
+                            <label for="inp_username" class="form-label">Username</label>
+                            <input type="text" class="form-control" id="inp_username" name="username" placeholder="Enter Username">
+                        </div>
+                        <div class="col-md-6">
+                            <label for="inp_email" class="form-label">Email</label>
+                            <input type="email" class="form-control" id="inp_email" name="email" placeholder="Enter Email">
+                        </div>
+                        <div class="col-md-6">
+                            <label for="inp_password" class="form-label">Password</label>
+                            <input type="text" class="form-control" id="inp_password" name="password" placeholder="Enter Password">
+                        </div>
+                        <div class="col-md-6">
+                            <label for="inp_role_id" class="form-label">Role ID</label>
+                            <input type="number" class="form-control" id="inp_role_id" name="role_id" placeholder="Enter Role ID">
+                        </div>
+                        <div class="col-md-6">
+                            <label for="inp_gender" class="form-label">Gender</label>
+                            <input type="text" class="form-control" id="inp_gender" name="gender" placeholder="Enter Gender">
+                        </div>
+                        <div class="col-md-6">
+                            <label for="inp_phone" class="form-label">Phone</label>
+                            <input type="text" class="form-control" id="inp_phone" name="phone" placeholder="Enter Phone Number">
+                        </div>
+                        <div class="col-md-6">
+                            <label for="inp_status" class="form-label">Status</label>
+                            <input type="text" class="form-control" id="inp_status" name="status" placeholder="Active / Inactive">
+                        </div>
+                        <div class="col-12 text-end mt-3">
+                            <button type="submit" class="btn btn-success rounded-pill">Save</button>
+                        </div>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+
+    <!-- Update User Form -->
+    <div class="collapse mb-4" id="update_user_collapse" is="dmx-bs5-collapse">
+        <div class="card shadow rounded-4 border-0">
+            <div class="card-body">
+                <h5 class="card-title">Update User</h5>
+                <form is="dmx-serverconnect-form" id="serverconnectform2" method="post" action="/api/admin_update_users" dmx-populate="users_details.data" class="pt-3" dmx-on:success="notifies1.success('User Updated!');serverconnectform2.reset(true);Display_all_users.load({})">
+                    <div class="row g-3">
+                        <div class="col-md-6">
+                            <label class="form-label">Username</label>
+                            <input type="text" class="form-control" name="username" dmx-bind:value="users_details.data.username">
+                        </div>
+                        <div class="col-md-6">
+                            <label class="form-label">Email</label>
+                            <input type="email" class="form-control" name="email" dmx-bind:value="users_details.data.email">
+                        </div>
+                        <!-- <div class="col-md-6">
+                            <label class="form-label">Password</label>
+                            <input type="password" class="form-control" name="password" dmx-bind:value="users_details.data.password">
+                        </div> -->
+                        <div class="col-md-6">
+                            <label class="form-label">Role</label>
+                            <input type="number" class="form-control" name="role_id" dmx-bind:value="users_details.data.role_id">
+                        </div>
+                        <div class="col-md-6">
+                            <label class="form-label">Gender</label>
+                            <input type="text" class="form-control" name="gender" dmx-bind:value="users_details.data.gender">
+                        </div>
+                        <div class="col-md-6">
+                            <label class="form-label">Phone</label>
+                            <input type="text" class="form-control" name="phone" dmx-bind:value="users_details.data.phone">
+                        </div>
+                        <div class="col-md-6">
+                            <label class="form-label">Status</label>
+                            <input type="text" class="form-control" name="status" dmx-bind:value="users_details.data.status">
+                        </div>
+                        <input type="hidden" name="user_id" dmx-bind:value="users_details.data.user_id">
+                        <div class="col-12 text-end mt-3">
+                            <button type="submit" class="btn btn-primary">Update</button>
+                        </div>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+
+    <!-- Delete User Form (Hidden Input Only) -->
+    <div class="collapse" id="upsert_action" is="dmx-bs5-collapse" show="true">
+        <form is="dmx-serverconnect-form" id="serverconnectform4" method="post" action="/api/upsert_action/admin_users_upsert" dmx-generator="bootstrap5" dmx-form-type="vertical" dmx-populate="users_details.data" dmx-on:success="browser1.goto('/admin/users_admin')" dmx-on:error="error_msg_modal.show()">
+            <div class="form-group mb-3">
+                <label for="inp_username">Username</label>
+                <input type="text" class="form-control" id="inp_username" name="username" dmx-bind:value="form_mode.value=='update'?users_details.data.username : '' " aria-describedby="inp_username_help" placeholder="Enter Username" required="">
+            </div>
+            <div class="form-group mb-3">
+                <label for="inp_email">Email</label>
+                <input type="text" class="form-control" id="inp_email" name="email" dmx-bind:value="form_mode.value == 'add' ?'' : 
+                users_details.data.email" aria-describedby="inp_email_help" placeholder="Enter Email" required="" data-rule-email="">
+            </div>
+            <div class="form-group mb-3">
+                <label for="inp_role_id">Role</label>
+                <!-- <input type="number" class="form-control" id="inp_role_id" name="role_id" dmx-bind:value="
+                form_mode.value == 'add' ?'' : 
+                users_details.data.role_id" aria-describedby="inp_role_id_help" placeholder="Enter Role" required=""> -->
+                <select class="form-select" id="inp_role_id" name="role_id" required dmx-bind:value="form_mode.value == 'add' ? '' : users_details.data.role_id" aria-describedby="inp_role_id_help">
+                    <option value="" disabled selected>Select Role</option>
+                    <option value="1">Admin</option>
+                    <option value="2">User</option>
+                </select>
+
+            </div>
+            <div class="form-group mb-3">
+                <label for="inp_gender">Gender</label>
+                <!-- <input type="text" class="form-control" id="inp_gender" name="gender" dmx-bind:value="
+                form_mode.value == 'add' ?'' : 
+                users_details.data.gender" aria-describedby="inp_gender_help" placeholder="Enter Gender"> -->
+                <select class="form-control" id="inp_gender" name="gender" dmx-bind:value="form_mode.value == 'add' ? '' : users_details.data.gender" aria-describedby="inp_gender_help" required="">
+                    <option value="">Select Gender</option>
+                    <option value="Male">Male</option>
+                    <option value="Female">Female</option>
+                    <option value="Other">Other</option>
+                </select>
+            </div>
+            <div class="form-group mb-3">
+                <label for="inp_phone">Phone</label>
+                <input type="text" class="form-control" id="inp_phone" name="phone" pattern="^\+?\d{1,4}?[-.\s]?\(?\d{1,4}?\)?[-.\s]?\d{1,4}[-.\s]?\d{1,4}[-.\s]?\d{1,4}$" dmx-bind:value="
+                form_mode.value == 'add' ?'' : 
+                users_details.data.phone" aria-describedby="inp_phone_help" placeholder="Enter Phone" required="" data-msg-minlength="Please enter at least 10  characters.">
+            </div>
+            <div class="form-group mb-3">
+                <label for="inp_status">Status</label>
+                <!-- <input type="text" class="form-control" id="inp_status" name="status" dmx-bind:value="
+                form_mode.value == 'add' ?'' : 
+                users_details.data.status" aria-describedby="inp_status_help" placeholder="Enter Status"> -->
+                <select class="form-control" id="inp_status" name="status" dmx-bind:value="form_mode.value == 'add' ? '' : users_details.data.status" aria-describedby="inp_status_help" required="">
+                    <option value="">Select Status</option>
+                    <option value="active">Active</option>
+                    <option value="inactive">Inactive</option>
+                </select>
+            </div>
+
+            <input type="hidden" name="user_id" id="inp_user_id" dmx-bind:value="
+            form_mode.value == 'add' ?'' :
+            users_details.data.user_id ">
+            <div class=" form-group mb-3">
+                <button type="submit" class="btn btn-primary" dmx-bind:value="users_details.data.Save" dmx-bind:disabled="state.executing">{{ form_mode.value == 'add' ? 'Add User' : 'Update User' }} <span class="spinner-border spinner-border-sm" role="status" dmx-show="state.executing"></span></button>
+            </div>
+        </form>
+
+
+
+    </div>
+    <form is="dmx-serverconnect-form" id="serverconnectform3" method="post" action="/api/admin_delete_users" dmx-populate="users_details.data" dmx-on:success="notifies1.success('User Deleted Successfully!');Display_all_users.load({})">
+        <input type="hidden" name="user_id" dmx-bind:value="users_details.data.user_id">
+    </form>
+
+    <!-- Back Button -->
+    <div class="text-center mt-5">
+        <button class="btn btn-dark rounded-pill" dmx-on:click="browser1.goto('/admin_dashboard')">← Back to Admin Dashboard</button>
+    </div>
+</div>
+
+<!-- Data detail + Server connect -->
+<dmx-data-detail id="users_details" dmx-bind:data="Display_all_users.data.display_all_users" key="user_id"></dmx-data-detail>
+<dmx-serverconnect id="Display_all_users" url="/api/display_all_users"></dmx-serverconnect>

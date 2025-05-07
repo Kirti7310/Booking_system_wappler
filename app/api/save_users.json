@@ -1,0 +1,178 @@
+{
+  "meta": {
+    "options": {
+      "linkedFile": "/views/registeration_page.ejs",
+      "linkedForm": "register1"
+    },
+    "$_POST": [
+      {
+        "type": "text",
+        "fieldName": "username",
+        "name": "username"
+      },
+      {
+        "type": "text",
+        "fieldName": "email",
+        "name": "email"
+      },
+      {
+        "type": "text",
+        "fieldName": "password",
+        "name": "password"
+      },
+      {
+        "type": "number",
+        "fieldName": "phone",
+        "options": {
+          "rules": {
+            "core:number": {}
+          }
+        },
+        "name": "phone"
+      },
+      {
+        "type": "text",
+        "fieldName": "gender",
+        "name": "gender"
+      }
+    ]
+  },
+  "exec": {
+    "steps": [
+      {
+        "name": "hash",
+        "module": "crypto",
+        "action": "passwordHash",
+        "options": {
+          "password": "{{$_POST.password}}"
+        },
+        "outputType": "text"
+      },
+      {
+        "name": "new_users_insert",
+        "module": "dbupdater",
+        "action": "insert",
+        "options": {
+          "connection": "booking_db",
+          "sql": {
+            "type": "insert",
+            "values": [
+              {
+                "table": "users",
+                "column": "email",
+                "type": "text",
+                "value": "{{$_POST.email}}"
+              },
+              {
+                "table": "users",
+                "column": "username",
+                "type": "text",
+                "value": "{{$_POST.username}}"
+              },
+              {
+                "table": "users",
+                "column": "password",
+                "type": "text",
+                "value": "{{hash}}"
+              },
+              {
+                "table": "users",
+                "column": "role_id",
+                "type": "number",
+                "value": "2"
+              },
+              {
+                "table": "users",
+                "column": "created_at",
+                "type": "datetime",
+                "value": "{{NOW}}"
+              },
+              {
+                "table": "users",
+                "column": "status",
+                "type": "text",
+                "value": "active"
+              },
+              {
+                "table": "users",
+                "column": "gender",
+                "type": "text",
+                "value": "{{$_POST.gender}}"
+              },
+              {
+                "table": "users",
+                "column": "phone",
+                "type": "text",
+                "value": "{{$_POST.phone}}"
+              }
+            ],
+            "table": "users",
+            "returning": "user_id",
+            "query": "insert into `users` (`created_at`, `email`, `gender`, `password`, `phone`, `role_id`, `status`, `username`) values (?, ?, ?, ?, ?, ?, ?, ?)",
+            "params": [
+              {
+                "name": ":P1",
+                "type": "expression",
+                "value": "{{$_POST.email}}",
+                "test": ""
+              },
+              {
+                "name": ":P2",
+                "type": "expression",
+                "value": "{{$_POST.username}}",
+                "test": ""
+              },
+              {
+                "name": ":P3",
+                "type": "expression",
+                "value": "{{hash}}",
+                "test": ""
+              },
+              {
+                "name": ":P4",
+                "type": "expression",
+                "value": "{{NOW}}",
+                "test": ""
+              },
+              {
+                "name": ":P5",
+                "type": "expression",
+                "value": "{{$_POST.gender}}",
+                "test": ""
+              },
+              {
+                "name": ":P6",
+                "type": "expression",
+                "value": "{{$_POST.phone}}",
+                "test": ""
+              }
+            ]
+          }
+        },
+        "meta": [
+          {
+            "name": "identity",
+            "type": "text"
+          },
+          {
+            "name": "affected",
+            "type": "number"
+          }
+        ],
+        "output": true
+      },
+      {
+        "name": "",
+        "module": "core",
+        "action": "response",
+        "options": {
+          "status": 200,
+          "data": "user registered!"
+        }
+      }
+    ]
+  },
+  "usedModules": {
+    "argon2": "^0.30.2"
+  }
+}

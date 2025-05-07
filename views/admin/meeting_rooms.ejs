@@ -1,0 +1,191 @@
+<!-- Wappler include head-page="layouts/main" is="dmx-app" id="meeting_rooms" appConnect="local" bootstrap5="cdn" jquery_35="cdn" fontawesome_4="cdn" components="{dmxBootstrap5Modal:{},dmxDataTraversal:{},dmxBootstrap5TableGenerator:{},dmxValidator:{}}" -->
+<dmx-api-action id="admin_meet_room_delete" noload="true" url="/api/meeting_rooms_api/admin_delete_rooms" method="post" data-type="json" dmx-data:id="data_detail1.data.id" dmx-on:success="delete_msg.show();serverconnect1_display_rooms.load({});serverconnectform1.reset()" dmx-on:error="delete_error_msg.show();serverconnectform1.reset();serverconnect1_display_rooms.load({})"></dmx-api-action>
+<dmx-api-action id="admin_meet_room_upsert" noload="true" url="/api/admin_mroom_upsert" method="post" data-type="json" dmx-data:mroom_name="roomForm.mroom_name.value" dmx-data:mdesc="roomForm.mdesc.value" dmx-data:room_id="roomForm.room_id.value" dmx-on:success="success_msg.show();roomForm.reset();serverconnect1_display_rooms.load({})" dmx-on:error=""></dmx-api-action>
+<form is="dmx-serverconnect-form" id="serverconnectform1" method="post" action="/api/meeting_rooms_api/admin_delete_rooms" dmx-generator="bootstrap5" dmx-form-type="horizontal" dmx-populate="data_detail1.data" dmx-on:success="serverconnect1_display_rooms.load({})">
+    <input type="hidden" name="id" id="inp_id" dmx-bind:value="data_detail1.data.id">
+</form>
+<dmx-data-detail id="data_detail1" dmx-bind:data="serverconnect1_display_rooms.data.admin_display_rooms" key="id"></dmx-data-detail>
+<dmx-serverconnect id="serverconnect1_display_rooms" url="/api/meeting_rooms_api/admin_display_rooms"></dmx-serverconnect>
+<div class="modal" id="success_msg" is="dmx-bs5-modal" tabindex="-1">
+    <div class="modal-dialog" role="document">
+        <div class="modal-content">
+            <div class="modal-header text-bg-success">
+                <h5 class="modal-title">Success!</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                <p>Meeting room successfully updated!</p>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-primary bg-success" dmx-on:click="success_msg.hide()">OK</button>
+            </div>
+        </div>
+    </div>
+</div>
+<div class="modal" id="delete_msg" is="dmx-bs5-modal" tabindex="-1">
+    <div class="modal-dialog" role="document">
+        <div class="modal-content">
+            <div class="modal-header text-bg-success">
+                <h5 class="modal-title">Success!</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                <p>Meeting room successfully Deleted!</p>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-primary bg-success" dmx-on:click="delete_msg.hide()">OK</button>
+            </div>
+        </div>
+    </div>
+</div>
+<div class="modal" id="error_msg" is="dmx-bs5-modal" tabindex="-1">
+    <div class="modal-dialog" role="document">
+        <div class="modal-content">
+            <div class="modal-header text-bg-danger">
+                <h5 class="modal-title">Error!</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                <p>Oops Something went Wrong , Try Again</p>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-primary bg-danger" dmx-on:click="error_msg.hide()">OK</button>
+            </div>
+        </div>
+    </div>
+</div>
+<div class="modal" id="delete_error_msg" is="dmx-bs5-modal" tabindex="-1">
+    <div class="modal-dialog" role="document">
+        <div class="modal-content">
+            <div class="modal-header text-bg-danger">
+                <h5 class="modal-title">Error!</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                <p>Oops Something went Wrong , Try Again</p>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-primary bg-danger" dmx-on:click="delete_error_msg.hide()">OK</button>
+            </div>
+        </div>
+    </div>
+</div>
+<meta name="ac:route" content="/admin/meeting_rooms">
+
+<div class="container my-5">
+    <div class="row">
+        <!-- Left Side: Form & Controls -->
+        <div class="col-lg-5 mb-4">
+
+            <h2 class="mb-4 text-center text-black">Manage Meeting Room</h2>
+
+            <!-- Action Buttons -->
+
+            <!-- <div class="d-flex justify-content-between mb-3">
+                <button class="btn btn-success rounded-pill px-4" data-bs-toggle="collapse" data-bs-target="#roomFormCollapse" dmx-on:click="formAction.setValue('add'); 
+                roomForm.reset();"><i class="fa fa-plus me-1"></i> Add</button>
+                <button class="btn rounded-pill px-4 btn-secondary" dmx-on:click="formAction.setValue('update')" dmx-bind:disabled="!selectedRoom.value">
+                    <i class="fa fa-edit me-1"></i> Update
+                </button>
+                <button class="btn rounded-pill px-4 btn-outline-secondary" dmx-bind:disabled="!selectedRoom.value" dmx-on:click="serverconnectform1.submit()">
+                    <i class="fa fa-trash me-1"></i> Delete
+                </button>
+
+
+            </div> -->
+
+            <!-- Collapse Form -->
+            <!-- <div class="row">
+                <div class="col">
+                    <div class="d-grid mt-2">
+                        <a href="/admin_dashboard" class="btn btn-dark btn-lg rounded-pill shadow-sm">
+                            <i class="fa fa-arrow-left me-2"></i> Back to Dashboard
+                        </a>
+                    </div>
+                </div>
+            </div> -->
+            <div class="collapse show" id="roomFormCollapse">
+                <div class="card shadow-lg border-0 rounded-4">
+                    <div class="card-body p-4 bg-white">
+                        <form id="roomForm" method="post" is="dmx-serverconnect-form" action="/api/meeting_rooms_api/admin_mroom_upsert" dmx-on:success="success_msg.toggle();serverconnect1_display_rooms.load({});roomForm.reset(true)">
+
+                            <input type="hidden" name="id" dmx-bind:value="formAction.value=='update'?data_detail1.data.id:''" id="room_id">
+
+
+                            <div class="mb-3">
+                                <label for="mroom_name" class="form-label text-dark fw-semibold">Room Name</label>
+                                <input type="text" class="form-control border-success rounded-pill" id="mroom_name" name="mroom_name" placeholder="Enter meeting room name" dmx-bind:value="formAction.value=='update'?data_detail1.data.mroom_name:''" required="">
+                            </div>
+
+                            <div class="mb-3">
+                                <label for="mdesc" class="form-label text-dark fw-semibold">Description</label>
+                                <textarea class="form-control border-success" id="mdesc" name="mdesc" rows="4" placeholder="Enter description" dmx-bind:value="formAction.value=='update'?data_detail1.data.mdesc:''"></textarea>
+                            </div>
+
+                            <div class="d-grid">
+                                <button type="submit" class="btn btn-success btn-lg rounded-pill shadow-sm">
+                                    <i class="fa fa-save me-2"></i> {{ formAction.value == 'add' ? 'Add Room' : 'Update Room' }}
+                                </button>
+                            </div>
+
+                            <div class="row">
+                                <div class="col">
+                                    <div class="d-grid mt-2">
+                                        <a href="/admin_dashboard" class="btn btn-dark btn-lg rounded-pill shadow-sm">
+                                            <i class="fa fa-arrow-left me-2"></i> Back to Dashboard
+                                        </a>
+                                    </div>
+                                </div>
+                            </div>
+                            <!-- <div class="d-grid mt-2">
+                                <a href="/admin/dashboard" class="btn btn-dark btn-lg rounded-pill shadow-sm">
+                                    <i class="fa fa-arrow-left me-2"></i> Back to Dashboard
+                                </a>
+                            </div> -->
+                        </form>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Right Side: Display Table (to be replaced with dynamic table) -->
+        <div class="col-lg-7">
+            <h2 class="text-success mb-4 text-center">Meeting Rooms</h2>
+            <div class="table-responsive">
+                <table class="table table-hover">
+                    <thead>
+                        <tr>
+                            <th class="text-center">Name</th>
+                            <th class="text-center">Description</th>
+                            <th colspan="2" class="text-center">Modify</th>
+                        </tr>
+                    </thead>
+                    <tbody is="dmx-repeat" dmx-generator="bs5table" dmx-bind:repeat="serverconnect1_display_rooms.data.admin_display_rooms" id="tableRepeat1">
+                        <tr dmx-on:click="data_detail1.select(id)">
+                            <td dmx-text="mroom_name" dmx-class:bg-light="id==data_detail1.data.id" dmx-on:click="selectedRoom.setValue(id)" class="text-center"></td>
+                            <td dmx-text="mdesc" class="text-center"></td>
+                            <td>
+                                <button class="btn btn-sm btn-outline-success rounded-pill px-3" dmx-on:click="data_detail1.select(room_id);formAction.setValue('update')">
+                                    Update
+                                </button>
+                            </td>
+                            <td>
+                                <button class="btn btn-sm btn-outline-danger rounded-pill px-3" dmx-on:click="admin_meet_room_delete.load({})">
+                                    Delete
+                                </button>
+                            </td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+
+            <!-- Example Repeat Table Placeholder -->
+
+
+        </div>
+    </div>
+</div>
+
+<!-- Define variables -->
+<dmx-value id="formAction" value="add"></dmx-value>
+<dmx-value id="selectedRoom" type="object"></dmx-value>

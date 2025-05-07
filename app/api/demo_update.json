@@ -1,0 +1,65 @@
+{
+  "meta": {
+    "$_POST": [
+      {
+        "type": "text",
+        "fieldName": "date",
+        "name": "date"
+      },
+      {
+        "type": "number",
+        "fieldName": "user_id",
+        "name": "user_id"
+      },
+      {
+        "type": "number",
+        "fieldName": "time_id",
+        "name": "time_id"
+      },
+      {
+        "type": "number",
+        "fieldName": "booking_id",
+        "name": "booking_id"
+      }
+    ]
+  },
+  "exec": {
+    "steps": {
+      "name": "custom",
+      "module": "dbupdater",
+      "action": "custom",
+      "options": {
+        "connection": "booking_db",
+        "sql": {
+          "query": "UPDATE booking_users\nJOIN users ON users.user_id = booking_users.user_id\nJOIN time_slot ON time_slot.time_id = booking_users.time_id\nSET \n  booking_users.date = :date,\n  booking_users.time_id = :time_id, \n  booking_users.user_id = :user_id\nWHERE booking_users.booking_id = :booking_id\n",
+          "params": [
+            {
+              "name": ":date",
+              "value": "{{$_POST.date}}"
+            },
+            {
+              "name": ":user_id",
+              "value": "{{$_POST.user_id}}"
+            },
+            {
+              "name": ":booking_id",
+              "value": "{{$_POST.booking_id}}"
+            },
+            {
+              "name": ":time_id",
+              "value": "{{$_POST.time_id}}"
+            }
+          ]
+        }
+      },
+      "output": true,
+      "meta": [
+        {
+          "name": "date",
+          "type": "text"
+        }
+      ],
+      "outputType": "array"
+    }
+  }
+}

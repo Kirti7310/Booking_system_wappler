@@ -1,0 +1,92 @@
+{
+  "meta": {
+    "$_POST": [
+      {
+        "type": "date",
+        "fieldName": "date",
+        "name": "date"
+      },
+      {
+        "type": "number",
+        "fieldName": "time_id",
+        "name": "time_id"
+      },
+      {
+        "type": "number",
+        "name": "booking_id"
+      }
+    ]
+  },
+  "exec": {
+    "steps": {
+      "name": "update_user_slot_details",
+      "module": "dbupdater",
+      "action": "update",
+      "options": {
+        "connection": "booking_db",
+        "sql": {
+          "type": "update",
+          "values": [
+            {
+              "table": "booking_users",
+              "column": "date",
+              "type": "date",
+              "value": "{{$_POST.date}}"
+            },
+            {
+              "table": "booking_users",
+              "column": "time_id",
+              "type": "number",
+              "value": "{{$_POST.time_id}}"
+            }
+          ],
+          "table": "booking_users",
+          "wheres": {
+            "condition": "AND",
+            "rules": [
+              {
+                "id": "booking_id",
+                "type": "double",
+                "operator": "equal",
+                "value": "{{$_POST.booking_id}}",
+                "data": {
+                  "column": "booking_id"
+                },
+                "operation": "="
+              }
+            ]
+          },
+          "returning": "booking_id",
+          "query": "update `booking_users` set `date` = ?, `time_id` = ? where `booking_id` = ?",
+          "params": [
+            {
+              "name": ":P1",
+              "type": "expression",
+              "value": "{{$_POST.date}}",
+              "test": ""
+            },
+            {
+              "name": ":P2",
+              "type": "expression",
+              "value": "{{$_POST.time_id}}",
+              "test": ""
+            },
+            {
+              "operator": "equal",
+              "type": "expression",
+              "name": ":P3",
+              "value": "{{$_POST.booking_id}}",
+              "test": ""
+            }
+          ]
+        }
+      },
+      "meta": [
+        {
+          "name": "affected",
+          "type": "number"
+        }
+      ]
+    }
+  }
+}

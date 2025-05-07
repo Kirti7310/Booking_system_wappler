@@ -1,0 +1,157 @@
+<!-- Wappler include head-page="layouts/main" is="dmx-app" id="booking_history" appConnect="local" bootstrap5="cdn" jquery_35="cdn" fontawesome_4="cdn" components="{dmxBrowser:{}}" -->
+
+<!-- Wappler include head-page="layouts/main" is="dmx-app" id="Booking_slots" appConnect="local" bootstrap5="cdn" jquery_35="cdn" fontawesome_4="cdn" components="{dmxNotifications:{},dmxBrowser:{},dmxBootstrap5Modal:{},dmxValidator:{},dmxDatePicker:{},dmxDataTraversal:{},dmxBootstrap5TableGenerator:{},dmxBootstrap5Collapse:{}}" moment_2="cdn" -->
+<dmx-data-detail id="user_slot_details" dmx-bind:data="user_booking_slots_dsiplay.data.each_user_slot_details" key="booking_id"></dmx-data-detail>
+
+<dmx-serverconnect id="user_booking_slots_dsiplay" url="/api/user_booking/single_user_booking"></dmx-serverconnect>
+<dmx-value id="selected_user"></dmx-value>
+<dmx-value id="form_action"></dmx-value>
+<dmx-serverconnect id="meeting_rooms_dropdown" url="/api/meeting_rooms_api/admin_display_rooms"></dmx-serverconnect>
+
+
+
+
+<dmx-notifications id="notifies2"></dmx-notifications>
+
+<div class="modal fade" id="success_poup_msg" is="dmx-bs5-modal" tabindex="-1">
+    <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-content border-success shadow-lg">
+            <div class="modal-header bg-success text-white">
+                <h5 class="modal-title"> Slot Allotted!</h5>
+                <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body text-center">
+                <p class="fs-5">Records Updated!</p>
+            </div>
+            <div class="modal-footer justify-content-center">
+                <button type="button" class="btn btn-success px-4" dmx-on:click="display_user_slot_details.load({});serverconnectform1.reset(true);success_poup_msg.toggle()">OK</button>
+            </div>
+        </div>
+    </div>
+</div>
+<div class="modal fade" id="error_poup_msg" is="dmx-bs5-modal" tabindex="-1">
+    <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-content border-danger shadow-lg">
+            <div class="modal-header bg-danger text-white">
+                <h5 class="modal-title">Record Already Exists</h5>
+                <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body text-center">
+                <p class="fs-5">Oops:\Records Already Exists</p>
+            </div>
+            <div class="modal-footer justify-content-center">
+                <button type="button" class="btn btn-success px-4 bg-danger" dmx-on:click="display_user_slot_details.load({});serverconnectform1.reset();error_poup_msg.toggle()">OK</button>
+            </div>
+        </div>
+    </div>
+</div>
+<dmx-api-action id="validate_user_slots" noload="true" url="/api/validations/validate_admin_slot_details" method="post" data-type="json" dmx-data:date="serverconnectform1.my_date.value" dmx-data:time_id="serverconnectform1.time_display.value" dmx-data:user_id="serverconnectform1.user_id.value" dmx-on:success="success_poup_msg.toggle();serverconnectform1.submit();display_user_slot_details.load({})" dmx-on:error="error_poup_msg.toggle();display_user_slot_details.load({})"></dmx-api-action>
+<dmx-serverconnect id="users_login_info" url="/api/users_login_success"></dmx-serverconnect>
+
+
+<dmx-serverconnect id="display_time" url="/api/display_time"></dmx-serverconnect>
+<script>
+    $(document).ready(function () {
+    $('#month-picker').datepicker({
+      format: 'mm',
+      viewMode: 'months',
+      minViewMode: 'months',
+      autoclose: true
+    });
+
+    $('#date-picker').datepicker({
+      format: 'dd',
+      autoclose: true
+    });
+  });
+</script>
+<div class="modal" id="modal1" is="dmx-bs5-modal" tabindex="-1">
+    <div class="modal-dialog" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title">Are You Sure?</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                <p>Confirm your booking details before proceeding.</p>
+            </div>
+            <div class="modal-footer">
+                <button type="reset" class="btn btn-danger" data-bs-dismiss="modal" id="close">Close</button>
+                <button type="submit" class="btn btn-success" id="success" dmx-on:click="serverconnectform1.submit();browser1.reload()">OK</button>
+            </div>
+        </div>
+    </div>
+</div>
+<div is="dmx-browser" id="browser1"></div>
+<dmx-notifications id="notifies1"></dmx-notifications>
+<div class="container wappler-block p-3">
+
+
+
+    <div class="row">
+        <div class="col">
+            <h1 class="text-center shadow mb-5 text-bg-success  rounded-pill">Booking History</h1>
+        </div>
+    </div>
+    <div class="row">
+
+
+        <div class="col">
+
+            <h3 dmx-on:click="collapse1.toggle();user_details_slot.load({});user_slot_details.load({})">Bookings Details</h3>
+            <!-- <div class="table-responsive">
+                <table class="table table-hover table-sm">
+                    <thead>
+                        <tr>
+                            <th>Date</th>
+                            <th>Start time</th>
+                            <th>End time</th>
+                            <th>Status</th>
+                        </tr>
+                    </thead>
+                    <tbody is="dmx-repeat" dmx-generator="bs5table" dmx-bind:repeat="display_user_slot_details.data.display_users_slot_details" id="tableRepeat1">
+                        <tr dmx-on:click="booking_details.select(booking_id)">
+                            <td dmx-text="date" dmx-class:bg-success-subtle="user_id==users_login_info.data.user_id_n"></td>
+                            <td dmx-text="start_time"></td>
+                            <td dmx-text="end_time"></td>
+                            <td dmx-text="status"></td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div> -->
+            <div>
+            </div>
+            <div class="table-responsive">
+                <table class="table table-hover table-sm">
+                    <thead>
+                        <tr>
+                            <th>Date</th>
+                            <th>Start time</th>
+                            <th>End time</th>
+                            <th>Mroom name</th>
+                            <th>Status</th>
+                        </tr>
+                    </thead>
+                    <tbody is="dmx-repeat" dmx-generator="bs5table" dmx-bind:repeat="user_booking_slots_dsiplay.data.each_user_slot_details" id="tableRepeat1">
+                        <tr dmx-on:click="user_slot_details.select(booking_id)">
+                            <td dmx-text="date"></td>
+                            <td dmx-text="start_time" dmx-class:bg-light="booking_id==user_slot_details.data.booking_id" dmx-on:click="selected_user.setValue(booking_id)"></td>
+                            <td dmx-text="end_time"></td>
+                            <!-- <td dmx-text="date"></td> -->
+                            <td dmx-text="mroom_name"></td>
+
+                            <td dmx-text="status"></td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+            <button class="btn btn-dark rounded-pill" dmx-on:click="browser1.goto('/users_dashboard')">← Back to User Dashboard</button>
+
+
+        </div>
+    </div>
+
+
+
+</div>
+<meta name="ac:route" content="/booking_history">

@@ -1,0 +1,319 @@
+{
+  "meta": {
+    "$_POST": [
+      {
+        "type": "text",
+        "name": "email"
+      },
+      {
+        "type": "text",
+        "name": "username"
+      },
+      {
+        "type": "number",
+        "name": "role_id"
+      },
+      {
+        "type": "text",
+        "name": "status"
+      },
+      {
+        "type": "text",
+        "name": "gender"
+      },
+      {
+        "type": "text",
+        "name": "phone"
+      },
+      {
+        "type": "number",
+        "name": "user_id"
+      },
+      {
+        "type": "text",
+        "name": "password"
+      }
+    ]
+  },
+  "exec": {
+    "steps": [
+      {
+        "name": "hash",
+        "module": "crypto",
+        "action": "passwordHash",
+        "options": {
+          "password": "{{$_POST.password}}"
+        },
+        "outputType": "text",
+        "output": true,
+        "disabled": true
+      },
+      {
+        "name": "",
+        "module": "core",
+        "action": "condition",
+        "options": {
+          "if": "{{$_POST.user_id>=1}}",
+          "else": {
+            "steps": {
+              "name": "admin_users_insertquery",
+              "module": "dbupdater",
+              "action": "insert",
+              "options": {
+                "connection": "booking_db",
+                "sql": {
+                  "type": "insert",
+                  "values": [
+                    {
+                      "table": "users",
+                      "column": "email",
+                      "type": "text",
+                      "value": "{{$_POST.email}}",
+                      "recid": 1
+                    },
+                    {
+                      "table": "users",
+                      "column": "username",
+                      "type": "text",
+                      "value": "{{$_POST.username}}",
+                      "recid": 2
+                    },
+                    {
+                      "table": "users",
+                      "column": "password",
+                      "type": "text",
+                      "value": "{{hash}}",
+                      "recid": 3
+                    },
+                    {
+                      "table": "users",
+                      "column": "role_id",
+                      "type": "number",
+                      "value": "{{$_POST.role_id}}",
+                      "recid": 4
+                    },
+                    {
+                      "table": "users",
+                      "column": "created_at",
+                      "type": "datetime",
+                      "value": "{{NOW}}",
+                      "recid": 5
+                    },
+                    {
+                      "table": "users",
+                      "column": "status",
+                      "type": "text",
+                      "value": "{{$_POST.status}}",
+                      "recid": 6
+                    },
+                    {
+                      "table": "users",
+                      "column": "gender",
+                      "type": "text",
+                      "value": "{{$_POST.gender}}",
+                      "recid": 7
+                    },
+                    {
+                      "table": "users",
+                      "column": "phone",
+                      "type": "text",
+                      "value": "{{$_POST.phone}}",
+                      "recid": 8
+                    }
+                  ],
+                  "table": "users",
+                  "returning": "user_id",
+                  "query": "insert into `users` (`created_at`, `email`, `gender`, `password`, `phone`, `role_id`, `status`, `username`) values (?, ?, ?, ?, ?, ?, ?, ?)",
+                  "params": [
+                    {
+                      "name": ":P1",
+                      "type": "expression",
+                      "value": "{{$_POST.email}}",
+                      "test": ""
+                    },
+                    {
+                      "name": ":P2",
+                      "type": "expression",
+                      "value": "{{$_POST.username}}",
+                      "test": ""
+                    },
+                    {
+                      "name": ":P3",
+                      "type": "expression",
+                      "value": "{{hash}}",
+                      "test": ""
+                    },
+                    {
+                      "name": ":P4",
+                      "type": "expression",
+                      "value": "{{$_POST.role_id}}",
+                      "test": ""
+                    },
+                    {
+                      "name": ":P5",
+                      "type": "expression",
+                      "value": "{{NOW}}",
+                      "test": ""
+                    },
+                    {
+                      "name": ":P6",
+                      "type": "expression",
+                      "value": "{{$_POST.status}}",
+                      "test": ""
+                    },
+                    {
+                      "name": ":P7",
+                      "type": "expression",
+                      "value": "{{$_POST.gender}}",
+                      "test": ""
+                    },
+                    {
+                      "name": ":P8",
+                      "type": "expression",
+                      "value": "{{$_POST.phone}}",
+                      "test": ""
+                    }
+                  ]
+                }
+              },
+              "meta": [
+                {
+                  "name": "identity",
+                  "type": "text"
+                },
+                {
+                  "name": "affected",
+                  "type": "number"
+                }
+              ]
+            }
+          }
+        },
+        "outputType": "boolean",
+        "disabled": true
+      },
+      {
+        "name": "admin_update_users",
+        "module": "dbupdater",
+        "action": "update",
+        "options": {
+          "connection": "booking_db",
+          "sql": {
+            "type": "update",
+            "values": [
+              {
+                "table": "users",
+                "column": "email",
+                "type": "text",
+                "value": "{{$_POST.email}}"
+              },
+              {
+                "table": "users",
+                "column": "username",
+                "type": "text",
+                "value": "{{$_POST.username}}"
+              },
+              {
+                "table": "users",
+                "column": "role_id",
+                "type": "number",
+                "value": "{{$_POST.role_id}}"
+              },
+              {
+                "table": "users",
+                "column": "status",
+                "type": "text",
+                "value": "{{$_POST.status}}"
+              },
+              {
+                "table": "users",
+                "column": "gender",
+                "type": "text",
+                "value": "{{$_POST.gender}}"
+              },
+              {
+                "table": "users",
+                "column": "phone",
+                "type": "text",
+                "value": "{{$_POST.phone}}"
+              }
+            ],
+            "table": "users",
+            "wheres": {
+              "condition": "AND",
+              "rules": [
+                {
+                  "id": "user_id",
+                  "type": "double",
+                  "operator": "equal",
+                  "value": "{{$_POST.user_id}}",
+                  "data": {
+                    "column": "user_id"
+                  },
+                  "operation": "="
+                }
+              ]
+            },
+            "returning": "user_id",
+            "query": "update `users` set `email` = ?, `username` = ?, `role_id` = ?, `status` = ?, `gender` = ?, `phone` = ? where `user_id` = ?",
+            "params": [
+              {
+                "name": ":P1",
+                "type": "expression",
+                "value": "{{$_POST.email}}",
+                "test": ""
+              },
+              {
+                "name": ":P2",
+                "type": "expression",
+                "value": "{{$_POST.username}}",
+                "test": ""
+              },
+              {
+                "name": ":P3",
+                "type": "expression",
+                "value": "{{$_POST.role_id}}",
+                "test": ""
+              },
+              {
+                "name": ":P4",
+                "type": "expression",
+                "value": "{{$_POST.status}}",
+                "test": ""
+              },
+              {
+                "name": ":P5",
+                "type": "expression",
+                "value": "{{$_POST.gender}}",
+                "test": ""
+              },
+              {
+                "name": ":P6",
+                "type": "expression",
+                "value": "{{$_POST.phone}}",
+                "test": ""
+              },
+              {
+                "operator": "equal",
+                "type": "expression",
+                "name": ":P7",
+                "value": "{{$_POST.user_id}}",
+                "test": ""
+              }
+            ]
+          }
+        },
+        "meta": [
+          {
+            "name": "affected",
+            "type": "number"
+          }
+        ],
+        "output": true
+      }
+    ]
+  },
+  "usedModules": {
+    "argon2": "^0.30.2"
+  }
+}

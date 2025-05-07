@@ -1,0 +1,272 @@
+{
+  "meta": {
+    "$_GET": [
+      {
+        "type": "text",
+        "name": "sort"
+      },
+      {
+        "type": "text",
+        "name": "dir"
+      }
+    ],
+    "$_POST": [
+      {
+        "type": "number",
+        "name": "user_id"
+      },
+      {
+        "type": "date",
+        "name": "date"
+      },
+      {
+        "type": "number",
+        "name": "time_id"
+      },
+      {
+        "type": "number",
+        "name": "booking_id"
+      },
+      {
+        "type": "text",
+        "fieldName": "status",
+        "name": "status"
+      }
+    ]
+  },
+  "exec": {
+    "steps": [
+      {
+        "name": "validate_update_slotdetails",
+        "module": "dbconnector",
+        "action": "select",
+        "options": {
+          "connection": "booking_db",
+          "sql": {
+            "type": "select",
+            "columns": [
+              {
+                "table": "booking_users",
+                "column": "booking_id",
+                "alias": "count",
+                "aggregate": "COUNT"
+              }
+            ],
+            "params": [
+              {
+                "operator": "equal",
+                "type": "expression",
+                "name": ":P1",
+                "value": "{{$_POST.user_id}}",
+                "test": ""
+              },
+              {
+                "operator": "equal",
+                "type": "expression",
+                "name": ":P2",
+                "value": "{{$_POST.date}}",
+                "test": ""
+              },
+              {
+                "operator": "equal",
+                "type": "expression",
+                "name": ":P3",
+                "value": "{{$_POST.time_id}}",
+                "test": ""
+              },
+              {
+                "operator": "equal",
+                "type": "expression",
+                "name": ":P4",
+                "value": "{{$_POST.status}}",
+                "test": ""
+              }
+            ],
+            "table": {
+              "name": "booking_users"
+            },
+            "primary": "booking_id",
+            "joins": [],
+            "groupBy": [],
+            "wheres": {
+              "condition": "AND",
+              "rules": [
+                {
+                  "id": "booking_users.user_id",
+                  "field": "booking_users.user_id",
+                  "type": "double",
+                  "operator": "equal",
+                  "value": "{{$_POST.user_id}}",
+                  "data": {
+                    "table": "booking_users",
+                    "column": "user_id",
+                    "type": "number",
+                    "columnObj": {
+                      "type": "reference",
+                      "default": "'4'",
+                      "primary": false,
+                      "nullable": true,
+                      "references": "user_id",
+                      "inTable": "users",
+                      "referenceType": "integer",
+                      "onUpdate": "NO ACTION",
+                      "onDelete": "NO ACTION",
+                      "name": "user_id"
+                    }
+                  },
+                  "operation": "=",
+                  "table": "booking_users"
+                },
+                {
+                  "id": "booking_users.date",
+                  "field": "booking_users.date",
+                  "type": "date",
+                  "operator": "equal",
+                  "value": "{{$_POST.date}}",
+                  "data": {
+                    "table": "booking_users",
+                    "column": "date",
+                    "type": "date",
+                    "columnObj": {
+                      "type": "date",
+                      "primary": false,
+                      "nullable": true,
+                      "name": "date"
+                    }
+                  },
+                  "operation": "=",
+                  "table": "booking_users"
+                },
+                {
+                  "id": "booking_users.time_id",
+                  "field": "booking_users.time_id",
+                  "type": "double",
+                  "operator": "equal",
+                  "value": "{{$_POST.time_id}}",
+                  "data": {
+                    "table": "booking_users",
+                    "column": "time_id",
+                    "type": "number",
+                    "columnObj": {
+                      "type": "reference",
+                      "primary": false,
+                      "nullable": true,
+                      "references": "time_id",
+                      "inTable": "time_slot",
+                      "referenceType": "integer",
+                      "onUpdate": "NO ACTION",
+                      "onDelete": "NO ACTION",
+                      "name": "time_id"
+                    }
+                  },
+                  "operation": "=",
+                  "table": "booking_users"
+                },
+                {
+                  "id": "booking_users.status",
+                  "field": "booking_users.status",
+                  "type": "string",
+                  "operator": "equal",
+                  "value": "{{$_POST.status}}",
+                  "data": {
+                    "table": "booking_users",
+                    "column": "status",
+                    "type": "text",
+                    "columnObj": {
+                      "type": "enum",
+                      "enumValues": [
+                        "pending",
+                        "approved",
+                        "rejected"
+                      ],
+                      "default": "'pending'",
+                      "maxLength": 8,
+                      "primary": false,
+                      "nullable": true,
+                      "name": "status"
+                    }
+                  },
+                  "operation": "=",
+                  "table": "booking_users"
+                }
+              ],
+              "conditional": null,
+              "valid": true
+            },
+            "query": "select count(`booking_id`) as `count` from `booking_users` where `booking_users`.`user_id` = ? and `booking_users`.`date` = ? and `booking_users`.`time_id` = ? and `booking_users`.`status` = ?"
+          }
+        },
+        "output": true,
+        "meta": [
+          {
+            "type": "number",
+            "name": "count"
+          }
+        ],
+        "outputType": "array"
+      },
+      {
+        "name": "",
+        "module": "core",
+        "action": "condition",
+        "options": {
+          "if": "{{validate_update_slotdetails[0].count>=1}}",
+          "then": {
+            "steps": {
+              "name": "",
+              "module": "core",
+              "action": "error",
+              "options": {
+                "message": "error"
+              }
+            }
+          },
+          "else": {
+            "steps": {
+              "name": "admin_updateuser_slots_details",
+              "module": "dbupdater",
+              "action": "custom",
+              "options": {
+                "connection": "booking_db",
+                "sql": {
+                  "query": "UPDATE booking_users\nJOIN users ON users.user_id = booking_users.user_id\nJOIN time_slot ON time_slot.time_id = booking_users.time_id\nSET \n  booking_users.date = :date,\n  booking_users.time_id = :time_id, \n  booking_users.user_id = :user_id,\n  booking_users.status = :status\nWHERE booking_users.booking_id = :booking_id",
+                  "params": [
+                    {
+                      "name": ":date",
+                      "value": "{{$_POST.date}}",
+                      "recid": 1
+                    },
+                    {
+                      "name": ":time_id",
+                      "value": "{{$_POST.time_id}}",
+                      "recid": 2
+                    },
+                    {
+                      "name": ":user_id",
+                      "value": "{{$_POST.user_id}}",
+                      "recid": 3
+                    },
+                    {
+                      "name": ":booking_id",
+                      "value": "{{$_POST.booking_id}}",
+                      "recid": 4
+                    },
+                    {
+                      "name": ":status",
+                      "value": "{{$_POST.status}}",
+                      "recid": 5
+                    }
+                  ]
+                }
+              },
+              "output": true,
+              "meta": [],
+              "outputType": "array"
+            }
+          }
+        },
+        "outputType": "boolean"
+      }
+    ]
+  }
+}

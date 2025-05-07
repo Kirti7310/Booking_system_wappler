@@ -1,0 +1,93 @@
+{
+  "meta": {
+    "$_GET": [
+      {
+        "type": "text",
+        "name": "sort"
+      },
+      {
+        "type": "text",
+        "name": "dir"
+      }
+    ]
+  },
+  "exec": {
+    "steps": {
+      "name": "users_list_dropdown",
+      "module": "dbconnector",
+      "action": "select",
+      "options": {
+        "connection": "booking_db",
+        "sql": {
+          "type": "select",
+          "columns": [
+            {
+              "table": "users",
+              "column": "user_id"
+            },
+            {
+              "table": "users",
+              "column": "username"
+            },
+            {
+              "table": "users",
+              "column": "status"
+            }
+          ],
+          "params": [],
+          "table": {
+            "name": "users"
+          },
+          "primary": "user_id",
+          "joins": [],
+          "wheres": {
+            "condition": "AND",
+            "rules": [
+              {
+                "id": "users.status",
+                "field": "users.status",
+                "type": "string",
+                "operator": "equal",
+                "value": "active",
+                "data": {
+                  "table": "users",
+                  "column": "status",
+                  "type": "text",
+                  "columnObj": {
+                    "type": "string",
+                    "default": "'active'",
+                    "maxLength": 20,
+                    "primary": false,
+                    "nullable": true,
+                    "name": "status"
+                  }
+                },
+                "operation": "=",
+                "table": "users"
+              }
+            ],
+            "conditional": null,
+            "valid": true
+          },
+          "query": "select `user_id`, `username`, `status` from `users` where `users`.`status` = ?"
+        }
+      },
+      "output": true,
+      "meta": [
+        {
+          "type": "number",
+          "name": "user_id"
+        },
+        {
+          "type": "text",
+          "name": "username"
+        },
+        {
+          "type": "text",
+          "name": "status"
+        }
+      ],
+      "outputType": "array"
+    }
+  }
+}

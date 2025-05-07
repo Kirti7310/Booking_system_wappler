@@ -1,0 +1,62 @@
+{
+  "registeration_page.ejs": {
+    "layoutPage": "main",
+    "description": ""
+  },
+  "login_page.ejs": {
+    "layoutPage": "main",
+    "description": ""
+  },
+  "admin_dashboard.ejs": {
+    "layoutPage": "main",
+    "description": ""
+  },
+  "users_dashboard.ejs": {
+    "layoutPage": "main",
+    "description": ""
+  },
+  "booking_slots.ejs": {
+    "layoutPage": "main",
+    "description": ""
+  },
+  "error_page.ejs": {
+    "layoutPage": "main",
+    "description": ""
+  },
+  "emailform.ejs": {
+    "layoutPage": "main",
+    "description": ""
+  },
+  "password_reset_link.ejs": {
+    "layoutPage": "main",
+    "description": ""
+  },
+  "password_new.ejs": {
+    "layoutPage": "main",
+    "description": ""
+  },
+  "passwrd.ejs": {
+    "layoutPage": "main",
+    "description": ""
+  },
+  "password_reset.ejs": {
+    "layoutPage": "main",
+    "description": ""
+  },
+  "all_bookings.ejs": {
+    "layoutPage": "main",
+    "description": ""
+  },
+  "bookings_all.ejs": {
+    "layoutPage": "main",
+    "description": ""
+  },
+  "booking_history.ejs": {
+    "layoutPage": "main",
+    "description": ""
+  },
+  "booking_slots_userside.ejs": {
+    "layoutPage": "main",
+    "description": ""
+  }
+}

@@ -1,0 +1,48 @@
+{
+  "meta": {
+    "$_SESSION": [
+      {
+        "type": "number",
+        "fieldName": "role_id",
+        "name": "role_id"
+      }
+    ]
+  },
+  "exec": {
+    "steps": [
+      {
+        "name": "",
+        "module": "auth",
+        "action": "restrict",
+        "options": {
+          "provider": "login_details_sp",
+          "permissions": [
+            "admin"
+          ],
+          "loginUrl": "/admin_dashboard",
+          "forbiddenUrl": "/error_page"
+        }
+      },
+      {
+        "name": "role_id",
+        "module": "core",
+        "action": "setsession",
+        "options": {
+          "value": "{{$_SESSION.role_id}}"
+        }
+      },
+      {
+        "name": "role_id",
+        "module": "core",
+        "action": "setvalue",
+        "options": {
+          "key": "role_id",
+          "value": "{{role_id}}"
+        },
+        "meta": [],
+        "outputType": "number",
+        "output": true
+      }
+    ]
+  }
+}

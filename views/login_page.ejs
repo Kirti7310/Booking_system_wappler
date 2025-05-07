@@ -1,0 +1,93 @@
+<!-- Wappler include head-page="layouts/main" is="dmx-app" id="login_page" appConnect="local" bootstrap5="cdn" jquery_35="cdn" fontawesome_4="cdn" components="{dmxNotifications:{},dmxBrowser:{},dmxBootstrap5Modal:{},dmxValidator:{}}" -->
+<dmx-serverconnect id="logout_user_action" url="/api/logout_allusers" noload="true"></dmx-serverconnect>
+<div class="modal" id="modal1" is="dmx-bs5-modal" tabindex="-1">
+    <div class="modal-dialog" role="document">
+        <div class="modal-content">
+            <div class="modal-header text-bg-success">
+                <h5 class="modal-title">Login Successfull!</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                <p>Redirecting to the Main Page....</p>
+            </div>
+            <div class="modal-footer">
+            </div>
+        </div>
+    </div>
+</div>
+<div is="dmx-browser" id="browser1"></div>
+<dmx-notifications id="notifies1"></dmx-notifications>
+<div class="container">
+    <form id="signup1" method="post" is="dmx-serverconnect-form" action="/api/login_users" dmx-on:success="modal1.toggle();browser1.goto(signup1.data.login_users[0].role_id==2?'/users_dashboard':'admin_dashboard')" dmx-on:unauthorized="notifies1.danger('Enter Your Correct Email &amp; Password !')" dmx-on:error="notifies1.danger('Error while loggin In :\\')">
+        <div class="row  d-flex justify-content-center">
+            <!-- <div class="col-12 col-md-8 col-lg-7 col-xl-5 text-start bg-light ">
+                <div class="row">
+                    <div class="col mt-5 ">
+
+                        <h1 class="text-center text-bg-success">Sign Up</h1>
+                        <p class="text-h3 text-center">Enter your details below.</p>
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="col mt-4">
+                        <input type="email" id="email" name="email" class="form-control text-center" placeholder="Enter Your Email">
+                    </div>
+                </div>
+                <div class="row mt-4">
+                    <div class="col">
+                        <input type="password" id="password" name="password" class="form-control text-center" placeholder="Enter Your Password">
+                    </div>
+                </div>
+                <div class="row mt-4 d-flex  justify-content-center">
+                    <div class="col d-flex justify-content-center">
+
+                        <button id="signup1_submit" class="btn btn-success" type="submit">Submit</button>
+                    </div>
+                </div>
+                <div class="row mt-4 d-flex  justify-content-center">
+                    <div class="col d-flex justify-content-center">
+                        <p>Don’t have an account? <a href="/registeration_page">Join us!</a></p>
+
+                    </div>
+                </div>
+            </div> -->
+
+            <div class="col-12 col-md-8 col-lg-7 col-xl-5 bg-light rounded-4 shadow-lg p-4 mt-5">
+                <div class="row">
+                    <div class="col mb-4">
+                        <h1 class="text-center  py-2 rounded-pill text-body-emphasis">Sign Up</h1>
+                        <p class="text-center text-muted mb-4">Enter your credentials below</p>
+
+                        <!-- <p class="h5 text-center text-muted mt-3">Enter your credentials below.</p> -->
+                    </div>
+                </div>
+
+                <div class="row">
+                    <div class="col mb-3">
+                        <input type="email" id="email" name="email" class="form-control text-center py-2 rounded-pill" placeholder="Enter Your Email" required="" data-rule-email="">
+                    </div>
+                </div>
+
+                <div class="row">
+                    <div class="col mb-4">
+                        <input type="password" id="password" name="password" class="form-control text-center py-2 rounded-pill" placeholder="Enter Your Password" required="">
+                    </div>
+                </div>
+
+                <div class="row">
+                    <div class="col d-flex justify-content-center mb-3">
+                        <button id="signup1_submit" class="btn btn-success px-4 py-2 rounded-pill" type="submit">Submit</button>
+                    </div>
+                </div>
+
+                <div class="row">
+                    <div class="col d-flex justify-content-center">
+                        <p class="text-muted">Don’t have an account? <a href="/registeration_page" class="text-success fw-semibold">Join us!</a></p>
+                    </div>
+                </div>
+            </div>
+
+        </div>
+    </form>
+</div>
+<meta name="ac:route" content="/login_page">

@@ -1,0 +1,37 @@
+{
+  "meta": {
+    "$_SESSION": [
+      {
+        "type": "number",
+        "fieldName": "role_id",
+        "name": "role_id"
+      },
+      {
+        "type": "number",
+        "fieldName": "user_id_n",
+        "name": "user_id_n"
+      }
+    ]
+  },
+  "exec": {
+    "steps": [
+      {
+        "name": "",
+        "module": "auth",
+        "action": "restrict",
+        "options": {
+          "provider": "login_details_sp"
+        }
+      },
+      {
+        "name": "success_session",
+        "module": "core",
+        "action": "response",
+        "options": {
+          "data": "{{$_SESSION.role_id}}",
+          "status": 200
+        }
+      }
+    ]
+  }
+}

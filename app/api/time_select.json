@@ -1,0 +1,50 @@
+{
+  "meta": {
+    "$_POST": [
+      {
+        "type": "date",
+        "fieldName": "date",
+        "name": "date"
+      }
+    ]
+  },
+  "exec": {
+    "steps": {
+      "name": "display_time",
+      "module": "dbupdater",
+      "action": "custom",
+      "options": {
+        "connection": "booking_db",
+        "sql": {
+          "query": "SELECT start_time, end_time, hour, time_id\nFROM time_slot\nWHERE \n  (\n    DATE(:selected_date) > CURDATE() -- show all times for future dates\n    OR\n    (\n      DATE(:selected_date) = CURDATE() -- for today, filter only future times\n      AND STR_TO_DATE(CONCAT(:selected_date, ' ', start_time), '%Y-%m-%d %h:%i %p') > NOW()\n    )\n  );",
+          "params": [
+            {
+              "name": ":selected_date",
+              "value": "{{$_POST.date}}"
+            }
+          ]
+        }
+      },
+      "output": true,
+      "meta": [
+        {
+          "name": "start_time",
+          "type": "text"
+        },
+        {
+          "name": "end_time",
+          "type": "text"
+        },
+        {
+          "name": "hour",
+          "type": "number"
+        },
+        {
+          "name": "time_id",
+          "type": "number"
+        }
+      ],
+      "outputType": "array"
+    }
+  }
+}

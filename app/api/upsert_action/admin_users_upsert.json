@@ -1,0 +1,663 @@
+{
+  "meta": {
+    "$_GET": [
+      {
+        "type": "text",
+        "name": "sort"
+      },
+      {
+        "type": "text",
+        "name": "dir"
+      }
+    ],
+    "$_POST": [
+      {
+        "type": "text",
+        "fieldName": "email",
+        "name": "email"
+      },
+      {
+        "type": "text",
+        "fieldName": "username",
+        "name": "username"
+      },
+      {
+        "type": "number",
+        "fieldName": "role_id",
+        "name": "role_id"
+      },
+      {
+        "type": "text",
+        "fieldName": "gender",
+        "name": "gender"
+      },
+      {
+        "type": "number",
+        "fieldName": "phone",
+        "name": "phone"
+      },
+      {
+        "type": "text",
+        "fieldName": "status",
+        "name": "status"
+      },
+      {
+        "type": "number",
+        "fieldName": "user_id",
+        "name": "user_id"
+      },
+      {
+        "type": "datetime",
+        "name": "created_at"
+      },
+      {
+        "type": "array",
+        "name": "record",
+        "sub": [
+          {
+            "type": "text",
+            "name": "reset_token"
+          },
+          {
+            "type": "datetime",
+            "name": "reset_token_exp"
+          },
+          {
+            "type": "text",
+            "name": "email"
+          },
+          {
+            "type": "text",
+            "name": "$_POST"
+          }
+        ]
+      }
+    ]
+  },
+  "exec": {
+    "steps": {
+      "name": "",
+      "module": "core",
+      "action": "condition",
+      "options": {
+        "if": "{{$_POST.user_id>=1}}",
+        "then": {
+          "steps": {
+            "name": "admin_users_update",
+            "module": "dbupdater",
+            "action": "update",
+            "options": {
+              "connection": "booking_db",
+              "sql": {
+                "type": "update",
+                "values": [
+                  {
+                    "table": "users",
+                    "column": "email",
+                    "type": "text",
+                    "value": "{{$_POST.email}}"
+                  },
+                  {
+                    "table": "users",
+                    "column": "username",
+                    "type": "text",
+                    "value": "{{$_POST.username}}"
+                  },
+                  {
+                    "table": "users",
+                    "column": "role_id",
+                    "type": "number",
+                    "value": "{{$_POST.role_id}}"
+                  },
+                  {
+                    "table": "users",
+                    "column": "created_at",
+                    "type": "datetime",
+                    "value": "{{NOW}}"
+                  },
+                  {
+                    "table": "users",
+                    "column": "status",
+                    "type": "text",
+                    "value": "{{$_POST.status}}"
+                  },
+                  {
+                    "table": "users",
+                    "column": "gender",
+                    "type": "text",
+                    "value": "{{$_POST.gender}}"
+                  },
+                  {
+                    "table": "users",
+                    "column": "phone",
+                    "type": "text",
+                    "value": "{{$_POST.phone}}"
+                  }
+                ],
+                "table": "users",
+                "wheres": {
+                  "condition": "AND",
+                  "rules": [
+                    {
+                      "id": "user_id",
+                      "type": "double",
+                      "operator": "equal",
+                      "value": "{{$_POST.user_id}}",
+                      "data": {
+                        "column": "user_id"
+                      },
+                      "operation": "="
+                    }
+                  ]
+                },
+                "returning": "user_id",
+                "query": "update `users` set `email` = ?, `username` = ?, `role_id` = ?, `created_at` = ?, `status` = ?, `gender` = ?, `phone` = ? where `user_id` = ?",
+                "params": [
+                  {
+                    "name": ":P1",
+                    "type": "expression",
+                    "value": "{{$_POST.email}}",
+                    "test": ""
+                  },
+                  {
+                    "name": ":P2",
+                    "type": "expression",
+                    "value": "{{$_POST.username}}",
+                    "test": ""
+                  },
+                  {
+                    "name": ":P3",
+                    "type": "expression",
+                    "value": "{{$_POST.role_id}}",
+                    "test": ""
+                  },
+                  {
+                    "name": ":P4",
+                    "type": "expression",
+                    "value": "{{NOW}}",
+                    "test": ""
+                  },
+                  {
+                    "name": ":P5",
+                    "type": "expression",
+                    "value": "{{$_POST.status}}",
+                    "test": ""
+                  },
+                  {
+                    "name": ":P6",
+                    "type": "expression",
+                    "value": "{{$_POST.gender}}",
+                    "test": ""
+                  },
+                  {
+                    "name": ":P7",
+                    "type": "expression",
+                    "value": "{{$_POST.phone}}",
+                    "test": ""
+                  },
+                  {
+                    "operator": "equal",
+                    "type": "expression",
+                    "name": ":P8",
+                    "value": "{{$_POST.user_id}}",
+                    "test": ""
+                  }
+                ]
+              }
+            },
+            "meta": [
+              {
+                "name": "affected",
+                "type": "number"
+              }
+            ],
+            "output": true
+          }
+        },
+        "else": {
+          "steps": [
+            {
+              "name": "email_validate",
+              "module": "validator",
+              "action": "validate",
+              "options": {
+                "data": [
+                  {
+                    "name": "email_valid",
+                    "value": "{{$_POST.email}}",
+                    "rules": {
+                      "db:notexists": {
+                        "param": {
+                          "connection": "booking_db",
+                          "table": "users",
+                          "column": "email"
+                        },
+                        "message": "Email  already exists in database."
+                      }
+                    },
+                    "fieldName": "email"
+                  }
+                ]
+              }
+            },
+            {
+              "name": "admin_users_insert",
+              "module": "dbupdater",
+              "action": "insert",
+              "options": {
+                "connection": "booking_db",
+                "sql": {
+                  "type": "insert",
+                  "values": [
+                    {
+                      "table": "users",
+                      "column": "email",
+                      "type": "text",
+                      "value": "{{$_POST.email}}",
+                      "recid": 1
+                    },
+                    {
+                      "table": "users",
+                      "column": "username",
+                      "type": "text",
+                      "value": "{{$_POST.username}}",
+                      "recid": 2
+                    },
+                    {
+                      "table": "users",
+                      "column": "password",
+                      "type": "text",
+                      "value": "coderelix123",
+                      "recid": 3
+                    },
+                    {
+                      "table": "users",
+                      "column": "role_id",
+                      "type": "number",
+                      "value": "{{$_POST.role_id}}",
+                      "recid": 4
+                    },
+                    {
+                      "table": "users",
+                      "column": "created_at",
+                      "type": "datetime",
+                      "value": "{{NOW}}",
+                      "recid": 5
+                    },
+                    {
+                      "table": "users",
+                      "column": "status",
+                      "type": "text",
+                      "value": "{{$_POST.status}}",
+                      "recid": 6
+                    },
+                    {
+                      "table": "users",
+                      "column": "gender",
+                      "type": "text",
+                      "value": "{{$_POST.gender}}",
+                      "recid": 7
+                    },
+                    {
+                      "table": "users",
+                      "column": "phone",
+                      "type": "text",
+                      "value": "{{$_POST.phone}}",
+                      "recid": 8
+                    }
+                  ],
+                  "table": "users",
+                  "returning": "user_id",
+                  "query": "insert into `users` (`created_at`, `email`, `gender`, `password`, `phone`, `role_id`, `status`, `username`) values (?, ?, ?, ?, ?, ?, ?, ?)",
+                  "params": [
+                    {
+                      "name": ":P1",
+                      "type": "expression",
+                      "value": "{{$_POST.email}}",
+                      "test": ""
+                    },
+                    {
+                      "name": ":P2",
+                      "type": "expression",
+                      "value": "{{$_POST.username}}",
+                      "test": ""
+                    },
+                    {
+                      "name": ":P3",
+                      "type": "expression",
+                      "value": "{{$_POST.role_id}}",
+                      "test": ""
+                    },
+                    {
+                      "name": ":P4",
+                      "type": "expression",
+                      "value": "{{NOW}}",
+                      "test": ""
+                    },
+                    {
+                      "name": ":P5",
+                      "type": "expression",
+                      "value": "{{$_POST.status}}",
+                      "test": ""
+                    },
+                    {
+                      "name": ":P6",
+                      "type": "expression",
+                      "value": "{{$_POST.gender}}",
+                      "test": ""
+                    },
+                    {
+                      "name": ":P7",
+                      "type": "expression",
+                      "value": "{{$_POST.phone}}",
+                      "test": ""
+                    }
+                  ]
+                }
+              },
+              "meta": [
+                {
+                  "name": "identity",
+                  "type": "text"
+                },
+                {
+                  "name": "affected",
+                  "type": "number"
+                }
+              ],
+              "output": true
+            },
+            {
+              "name": "validate_email",
+              "module": "validator",
+              "action": "validate",
+              "options": {
+                "data": [
+                  {
+                    "name": "email",
+                    "value": "{{$_POST.email}}",
+                    "rules": {
+                      "db:exists": {
+                        "param": {
+                          "connection": "booking_db",
+                          "table": "users",
+                          "column": "email"
+                        },
+                        "message": "email does not exist in database."
+                      }
+                    },
+                    "fieldName": "email"
+                  }
+                ]
+              }
+            },
+            {
+              "name": "email_query",
+              "module": "dbconnector",
+              "action": "select",
+              "options": {
+                "connection": "booking_db",
+                "sql": {
+                  "type": "select",
+                  "columns": [
+                    {
+                      "table": "users",
+                      "column": "email"
+                    },
+                    {
+                      "table": "users",
+                      "column": "password"
+                    }
+                  ],
+                  "params": [
+                    {
+                      "operator": "equal",
+                      "type": "expression",
+                      "name": ":P1",
+                      "value": "{{$_POST.email}}",
+                      "test": ""
+                    }
+                  ],
+                  "table": {
+                    "name": "users"
+                  },
+                  "primary": "user_id",
+                  "joins": [],
+                  "wheres": {
+                    "condition": "AND",
+                    "rules": [
+                      {
+                        "id": "users.email",
+                        "field": "users.email",
+                        "type": "string",
+                        "operator": "equal",
+                        "value": "{{$_POST.email}}",
+                        "data": {
+                          "table": "users",
+                          "column": "email",
+                          "type": "text",
+                          "columnObj": {
+                            "type": "string",
+                            "maxLength": 30,
+                            "primary": false,
+                            "nullable": false,
+                            "name": "email"
+                          }
+                        },
+                        "operation": "=",
+                        "table": "users"
+                      }
+                    ],
+                    "conditional": null,
+                    "valid": true
+                  },
+                  "query": "select `email`, `password` from `users` where `users`.`email` = ?"
+                }
+              },
+              "meta": [
+                {
+                  "type": "text",
+                  "name": "email"
+                },
+                {
+                  "type": "text",
+                  "name": "password"
+                }
+              ],
+              "outputType": "array"
+            },
+            {
+              "name": "reset_token",
+              "module": "core",
+              "action": "setvalue",
+              "options": {
+                "key": "reset_token",
+                "value": "{{uuid()}}"
+              },
+              "meta": [],
+              "outputType": "text",
+              "disabled": true
+            },
+            {
+              "name": "reset_token_exp",
+              "module": "core",
+              "action": "setvalue",
+              "options": {
+                "key": "reset_token_exp",
+                "value": "{{now().addYears(1)}}"
+              },
+              "meta": [],
+              "outputType": "text",
+              "disabled": true
+            },
+            {
+              "name": "update_token",
+              "module": "dbupdater",
+              "action": "update",
+              "options": {
+                "connection": "booking_db",
+                "sql": {
+                  "type": "update",
+                  "values": [
+                    {
+                      "table": "users",
+                      "column": "reset_token",
+                      "type": "text",
+                      "value": "{{reset_token}}"
+                    },
+                    {
+                      "table": "users",
+                      "column": "reset_token_exp",
+                      "type": "datetime",
+                      "value": "{{reset_token_exp}}"
+                    }
+                  ],
+                  "table": "users",
+                  "wheres": {
+                    "condition": "AND",
+                    "rules": [
+                      {
+                        "id": "email",
+                        "field": "email",
+                        "type": "string",
+                        "operator": "equal",
+                        "value": "{{$_POST.email}}",
+                        "data": {
+                          "column": "email"
+                        },
+                        "operation": "="
+                      }
+                    ],
+                    "conditional": null,
+                    "valid": true
+                  },
+                  "returning": "user_id",
+                  "query": "update `users` set `reset_token` = ?, `reset_token_exp` = ? where `email` = ?",
+                  "params": [
+                    {
+                      "name": ":P1",
+                      "type": "expression",
+                      "value": "{{reset_token}}",
+                      "test": ""
+                    },
+                    {
+                      "name": ":P2",
+                      "type": "expression",
+                      "value": "{{reset_token_exp}}",
+                      "test": ""
+                    },
+                    {
+                      "operator": "equal",
+                      "type": "expression",
+                      "name": ":P3",
+                      "value": "{{$_POST.email}}",
+                      "test": ""
+                    }
+                  ]
+                }
+              },
+              "meta": [
+                {
+                  "name": "affected",
+                  "type": "number"
+                }
+              ],
+              "disabled": true
+            },
+            {
+              "name": "repeatemail",
+              "module": "core",
+              "action": "repeat",
+              "options": {
+                "repeat": "{{email_query}}",
+                "outputFields": [],
+                "exec": {
+                  "steps": [
+                    {
+                      "name": "hash",
+                      "module": "core",
+                      "action": "setvalue",
+                      "options": {
+                        "key": "hash",
+                        "value": "{{email.sha256(password)}}"
+                      },
+                      "meta": [],
+                      "outputType": "text"
+                    },
+                    {
+                      "name": "hash",
+                      "module": "core",
+                      "action": "setvalue",
+                      "options": {
+                        "key": "hash",
+                        "value": "{{'{{ password.passwordHash()+'\\'}}'}}"
+                      },
+                      "meta": [],
+                      "outputType": "text",
+                      "disabled": true
+                    },
+                    {
+                      "name": "email",
+                      "module": "core",
+                      "action": "setvalue",
+                      "options": {
+                        "key": "email",
+                        "value": "{{email}}"
+                      },
+                      "meta": [],
+                      "outputType": "text"
+                    },
+                    {
+                      "name": "",
+                      "module": "mail",
+                      "action": "send",
+                      "options": {
+                        "instance": "user_confirm_mail",
+                        "subject": "users_confirm_email",
+                        "fromName": "{{$_POST.username}}",
+                        "fromEmail": "{{$_POST.email}}",
+                        "toEmail": "karapurkarkirti@gmail.com",
+                        "toName": "kirti",
+                        "body": "<p><br></p><p><br></p><p data-start=\"146\" data-end=\"236\" class=\"\">You have successfully registered in our system. 🎉<br data-start=\"196\" data-end=\"199\"> Please find your login details below:</p><p data-start=\"238\" data-end=\"271\" class=\"\"><strong data-start=\"238\" data-end=\"254\">Login Email:</strong> {{$_POST.email}}</p><p data-start=\"273\" data-end=\"375\" class=\"\">To set your password and access your account, please click the link below:<br data-start=\"347\" data-end=\"350\"><a href=\"http://localhost:3000/password_reset_link?email={{email}}&amp;id={{hash}}\">[Password Reset Link]</a></p><p data-start=\"377\" data-end=\"444\" class=\"\">We’re excited to have you with us and look forward to your journey!</p><p data-start=\"446\" data-end=\"474\" class=\"\">Best regards,<br data-start=\"459\" data-end=\"462\"> <strong data-start=\"462\" data-end=\"474\">The Team</strong></p>",
+                        "replyTo": "{{$_POST.email}}",
+                        "contentType": "html"
+                      }
+                    }
+                  ]
+                }
+              },
+              "meta": [
+                {
+                  "name": "$index",
+                  "type": "number"
+                },
+                {
+                  "name": "$number",
+                  "type": "number"
+                },
+                {
+                  "name": "$name",
+                  "type": "text"
+                },
+                {
+                  "name": "$value",
+                  "type": "object"
+                },
+                {
+                  "name": "email",
+                  "type": "text"
+                },
+                {
+                  "name": "password",
+                  "type": "text"
+                }
+              ],
+              "outputType": "array"
+            }
+          ]
+        }
+      },
+      "outputType": "boolean"
+    }
+  }
+}

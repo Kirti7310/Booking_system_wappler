@@ -1,0 +1,169 @@
+{
+  "meta": {
+    "$_GET": [
+      {
+        "type": "text",
+        "name": "sort"
+      },
+      {
+        "type": "text",
+        "name": "dir"
+      }
+    ],
+    "$_POST": [
+      {
+        "type": "number",
+        "fieldName": "time_id",
+        "name": "time_id"
+      },
+      {
+        "type": "number",
+        "fieldName": "booking_id",
+        "name": "booking_id"
+      },
+      {
+        "type": "number",
+        "fieldName": "user_id",
+        "name": "user_id"
+      }
+    ]
+  },
+  "exec": {
+    "steps": [
+      {
+        "name": "cancellation_query",
+        "module": "dbupdater",
+        "action": "custom",
+        "options": {
+          "connection": "booking_db",
+          "sql": {
+            "query": "\nSelect count(booking_users.booking_id)  as booking_count FROM booking_users  INNER JOIN time_slot ON booking_users.time_id = time_slot.time_id  WHERE booking_users.booking_id\n= :booking_id AND booking_users.user_id = :user_id  and booking_users.time_id = :time_id  AND NOW() <= STR_TO_DATE(CONCAT(booking_users.date, ' ', time_slot.start_time), '%Y-%m-%d %h:%i %p') group by booking_users.booking_id;",
+            "params": [
+              {
+                "name": ":booking_id",
+                "value": "{{$_POST.booking_id}}"
+              },
+              {
+                "name": ":user_id",
+                "value": "{{$_POST.user_id}}"
+              },
+              {
+                "name": ":time_id",
+                "value": "{{$_POST.time_id}}"
+              }
+            ]
+          }
+        },
+        "output": true,
+        "meta": [
+          {
+            "name": "booking_id",
+            "type": "number"
+          },
+          {
+            "name": "user_id",
+            "type": "number"
+          },
+          {
+            "name": "time_id",
+            "type": "number"
+          },
+          {
+            "name": "booking_count",
+            "type": "number"
+          }
+        ],
+        "outputType": "array"
+      },
+      {
+        "name": "",
+        "module": "core",
+        "action": "condition",
+        "options": {
+          "if": "{{cancellation_query[0].booking_count>=1}}",
+          "then": {
+            "steps": [
+              {
+                "name": "delete_applicable",
+                "module": "dbupdater",
+                "action": "delete",
+                "options": {
+                  "connection": "booking_db",
+                  "sql": {
+                    "type": "delete",
+                    "table": "booking_users",
+                    "wheres": {
+                      "condition": "AND",
+                      "rules": [
+                        {
+                          "id": "booking_id",
+                          "type": "double",
+                          "operator": "equal",
+                          "value": "{{$_POST.booking_id}}",
+                          "data": {
+                            "column": "booking_id"
+                          },
+                          "operation": "="
+                        }
+                      ]
+                    },
+                    "returning": "booking_id",
+                    "query": "delete from `booking_users` where `booking_id` = ?",
+                    "params": [
+                      {
+                        "operator": "equal",
+                        "type": "expression",
+                        "name": ":P1",
+                        "value": "{{$_POST.booking_id}}",
+                        "test": ""
+                      }
+                    ]
+                  }
+                },
+                "meta": [
+                  {
+                    "name": "affected",
+                    "type": "number"
+                  }
+                ]
+              },
+              {
+                "name": "success",
+                "module": "core",
+                "action": "response",
+                "options": {
+                  "status": 200,
+                  "data": "Record present"
+                },
+                "disabled": true
+              }
+            ]
+          },
+          "else": {
+            "steps": [
+              {
+                "name": "",
+                "module": "core",
+                "action": "error",
+                "options": {
+                  "message": "Booking Can't be cancelled already the time has passed:\\"
+                }
+              },
+              {
+                "name": "success",
+                "module": "core",
+                "action": "response",
+                "options": {
+                  "status": 200,
+                  "data": "Record Not present"
+                },
+                "disabled": true
+              }
+            ]
+          }
+        },
+        "outputType": "boolean"
+      }
+    ]
+  }
+}

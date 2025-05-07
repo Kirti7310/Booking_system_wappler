@@ -1,0 +1,11 @@
+{
+  "name": "user_confirm_mail",
+  "module": "mail",
+  "action": "setup",
+  "options": {
+    "host": "sandbox.smtp.mailtrap.io",
+    "username": "c3795d70d44140",
+    "password": "79c8ca81f60185",
+    "port": 465
+  }
+}

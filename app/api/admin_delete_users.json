@@ -1,0 +1,60 @@
+{
+  "meta": {
+    "$_POST": [
+      {
+        "type": "number",
+        "name": "user_id"
+      }
+    ]
+  },
+  "exec": {
+    "steps": {
+      "name": "admin_delete_users",
+      "module": "dbupdater",
+      "action": "delete",
+      "options": {
+        "connection": "booking_db",
+        "sql": {
+          "type": "delete",
+          "table": "users",
+          "wheres": {
+            "condition": "AND",
+            "rules": [
+              {
+                "id": "user_id",
+                "field": "user_id",
+                "type": "double",
+                "operator": "equal",
+                "value": "{{$_POST.user_id}}",
+                "data": {
+                  "column": "user_id"
+                },
+                "operation": "="
+              }
+            ],
+            "conditional": null,
+            "valid": true
+          },
+          "returning": "user_id",
+          "query": "delete from `users` where `user_id` = ?",
+          "params": [
+            {
+              "operator": "equal",
+              "type": "expression",
+              "name": ":P1",
+              "value": "{{$_POST.user_id}}",
+              "test": ""
+            }
+          ]
+        }
+      },
+      "meta": [
+        {
+          "name": "affected",
+          "type": "number"
+        }
+      ],
+      "output": true
+    }
+  }
+}

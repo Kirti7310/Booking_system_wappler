@@ -1,0 +1,64 @@
+{
+  "meta": {
+    "$_GET": [
+      {
+        "type": "text",
+        "name": "sort"
+      },
+      {
+        "type": "text",
+        "name": "dir"
+      }
+    ]
+  },
+  "exec": {
+    "steps": {
+      "name": "admin_display_rooms",
+      "module": "dbconnector",
+      "action": "select",
+      "options": {
+        "connection": "booking_db",
+        "sql": {
+          "type": "select",
+          "columns": [
+            {
+              "table": "meeting_rooms",
+              "column": "mroom_name"
+            },
+            {
+              "table": "meeting_rooms",
+              "column": "mdesc"
+            },
+            {
+              "table": "meeting_rooms",
+              "column": "id"
+            }
+          ],
+          "params": [],
+          "table": {
+            "name": "meeting_rooms"
+          },
+          "primary": "id",
+          "joins": [],
+          "query": "select `mroom_name`, `mdesc`, `id` from `meeting_rooms`"
+        }
+      },
+      "meta": [
+        {
+          "type": "text",
+          "name": "mroom_name"
+        },
+        {
+          "type": "text",
+          "name": "mdesc"
+        },
+        {
+          "type": "number",
+          "name": "id"
+        }
+      ],
+      "outputType": "array",
+      "output": true
+    }
+  }
+}

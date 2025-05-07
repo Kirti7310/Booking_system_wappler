@@ -1,0 +1,327 @@
+{
+  "meta": {
+    "$_POST": [
+      {
+        "type": "date",
+        "fieldName": "date",
+        "options": {
+          "rules": {
+            "core:required": {}
+          }
+        },
+        "name": "date"
+      },
+      {
+        "type": "number",
+        "fieldName": "time_id",
+        "options": {
+          "rules": {
+            "core:required": {}
+          }
+        },
+        "name": "time_id"
+      },
+      {
+        "type": "number",
+        "fieldName": "user_id",
+        "options": {
+          "rules": {
+            "core:required": {}
+          }
+        },
+        "name": "user_id"
+      },
+      {
+        "type": "number",
+        "fieldName": "meet_id",
+        "name": "meet_id"
+      },
+      {
+        "type": "number",
+        "fieldName": "booking_id",
+        "name": "booking_id"
+      }
+    ]
+  },
+  "exec": {
+    "steps": [
+      {
+        "name": "validate_admin_slot_details",
+        "module": "dbconnector",
+        "action": "select",
+        "options": {
+          "connection": "booking_db",
+          "sql": {
+            "type": "select",
+            "columns": [
+              {
+                "table": "booking_users",
+                "column": "booking_id",
+                "alias": "count",
+                "aggregate": "COUNT"
+              },
+              {
+                "table": "booking_users",
+                "column": "booking_id"
+              }
+            ],
+            "params": [
+              {
+                "operator": "equal",
+                "type": "expression",
+                "name": ":P1",
+                "value": "{{$_POST.user_id}}",
+                "test": "3"
+              },
+              {
+                "operator": "equal",
+                "type": "expression",
+                "name": ":P2",
+                "value": "{{$_POST.date}}",
+                "test": "2025-04-30"
+              },
+              {
+                "operator": "equal",
+                "type": "expression",
+                "name": ":P3",
+                "value": "{{$_POST.time_id}}",
+                "test": "20"
+              },
+              {
+                "operator": "equal",
+                "type": "expression",
+                "name": ":P4",
+                "value": "{{$_POST.meet_id}}",
+                "test": "4"
+              }
+            ],
+            "table": {
+              "name": "booking_users"
+            },
+            "primary": "booking_id",
+            "joins": [],
+            "groupBy": [
+              {
+                "table": "booking_users",
+                "column": "booking_id"
+              }
+            ],
+            "wheres": {
+              "condition": "AND",
+              "rules": [
+                {
+                  "id": "booking_users.user_id",
+                  "field": "booking_users.user_id",
+                  "type": "double",
+                  "operator": "equal",
+                  "value": "{{$_POST.user_id}}",
+                  "data": {
+                    "table": "booking_users",
+                    "column": "user_id",
+                    "type": "number",
+                    "columnObj": {
+                      "type": "reference",
+                      "default": "'4'",
+                      "primary": false,
+                      "nullable": true,
+                      "references": "user_id",
+                      "inTable": "users",
+                      "referenceType": "integer",
+                      "onUpdate": "NO ACTION",
+                      "onDelete": "NO ACTION",
+                      "name": "user_id"
+                    }
+                  },
+                  "operation": "=",
+                  "table": "booking_users"
+                },
+                {
+                  "id": "booking_users.date",
+                  "field": "booking_users.date",
+                  "type": "date",
+                  "operator": "equal",
+                  "value": "{{$_POST.date}}",
+                  "data": {
+                    "table": "booking_users",
+                    "column": "date",
+                    "type": "date",
+                    "columnObj": {
+                      "type": "date",
+                      "primary": false,
+                      "nullable": true,
+                      "name": "date"
+                    }
+                  },
+                  "operation": "=",
+                  "table": "booking_users"
+                },
+                {
+                  "id": "booking_users.time_id",
+                  "field": "booking_users.time_id",
+                  "type": "double",
+                  "operator": "equal",
+                  "value": "{{$_POST.time_id}}",
+                  "data": {
+                    "table": "booking_users",
+                    "column": "time_id",
+                    "type": "number",
+                    "columnObj": {
+                      "type": "reference",
+                      "primary": false,
+                      "nullable": true,
+                      "references": "time_id",
+                      "inTable": "time_slot",
+                      "referenceType": "integer",
+                      "onUpdate": "NO ACTION",
+                      "onDelete": "NO ACTION",
+                      "name": "time_id"
+                    }
+                  },
+                  "operation": "=",
+                  "table": "booking_users"
+                },
+                {
+                  "id": "booking_users.meet_id",
+                  "field": "booking_users.meet_id",
+                  "type": "double",
+                  "operator": "equal",
+                  "value": "{{$_POST.meet_id}}",
+                  "data": {
+                    "table": "booking_users",
+                    "column": "meet_id",
+                    "type": "number",
+                    "columnObj": {
+                      "type": "reference",
+                      "primary": false,
+                      "nullable": true,
+                      "references": "id",
+                      "inTable": "meeting_rooms",
+                      "referenceType": "integer",
+                      "onUpdate": "CASCADE",
+                      "onDelete": "CASCADE",
+                      "name": "meet_id"
+                    }
+                  },
+                  "operation": "=",
+                  "table": "booking_users"
+                }
+              ],
+              "conditional": null,
+              "valid": true
+            },
+            "query": "select count(`booking_id`) as `count`, `booking_id` from `booking_users` where `booking_users`.`user_id` = ? and `booking_users`.`date` = ? and `booking_users`.`time_id` = ? and `booking_users`.`meet_id` = ? group by `booking_id`"
+          }
+        },
+        "output": true,
+        "meta": [
+          {
+            "type": "number",
+            "name": "count"
+          },
+          {
+            "type": "number",
+            "name": "booking_id"
+          }
+        ],
+        "outputType": "array"
+      },
+      {
+        "name": "",
+        "module": "core",
+        "action": "condition",
+        "options": {
+          "if": "{{validate_admin_slot_details[0].count>0}}",
+          "then": {
+            "steps": [
+              {
+                "name": "",
+                "module": "core",
+                "action": "response",
+                "options": {
+                  "data": 200,
+                  "status": "success"
+                },
+                "disabled": true
+              },
+              {
+                "name": "",
+                "module": "core",
+                "action": "condition",
+                "options": {
+                  "if": "{{validate_admin_slot_details[0].booking_id==$_POST.booking_id}}",
+                  "then": {
+                    "steps": {
+                      "name": "success",
+                      "module": "core",
+                      "action": "response",
+                      "options": {
+                        "status": 200,
+                        "data": "success"
+                      }
+                    }
+                  },
+                  "else": {
+                    "steps": {
+                      "name": "",
+                      "module": "core",
+                      "action": "error",
+                      "options": {
+                        "message": "error"
+                      }
+                    }
+                  }
+                },
+                "outputType": "boolean"
+              }
+            ]
+          },
+          "else": {
+            "steps": [
+              {
+                "name": "",
+                "module": "core",
+                "action": "response",
+                "options": {
+                  "data": 400,
+                  "status": "error"
+                },
+                "disabled": true
+              },
+              {
+                "name": "",
+                "module": "core",
+                "action": "condition",
+                "options": {
+                  "if": "{{validate_admin_slot_details[0].count>=1}}",
+                  "then": {
+                    "steps": {
+                      "name": "",
+                      "module": "core",
+                      "action": "error",
+                      "options": {
+                        "message": "error"
+                      }
+                    }
+                  },
+                  "else": {
+                    "steps": {
+                      "name": "success",
+                      "module": "core",
+                      "action": "response",
+                      "options": {
+                        "status": 200,
+                        "data": "success"
+                      }
+                    }
+                  }
+                },
+                "outputType": "boolean"
+              }
+            ]
+          }
+        },
+        "outputType": "boolean"
+      }
+    ]
+  }
+}

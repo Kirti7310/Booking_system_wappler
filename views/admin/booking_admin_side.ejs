@@ -1,0 +1,597 @@
+<!-- Wappler include head-page="layouts/main" is="dmx-app" id="booking_admin_side" appConnect="local" bootstrap5="cdn" jquery_35="cdn" fontawesome_4="cdn" components="{dmxBrowser:{},dmxBootstrap5Collapse:{},dmxBootstrap5TableGenerator:{},dmxDataTraversal:{},dmxNotifications:{},dmxBootstrap5Modal:{},dmxValidator:{}}" -->
+<dmx-serverconnect id="display_time" url="/api/display_time"></dmx-serverconnect>
+<dmx-api-action id="time_select" url="/api/time_select" method="post" dmx-data:date="serverconnectform1.my_date.value" data-type="json" noload="true"></dmx-api-action>
+<dmx-datetime id="var1" interval="days"></dmx-datetime>
+<dmx-api-action id="delete_slots_book" noload="true" url="/api/admin_booking/delete_book_slots" method="post" data-type="json" dmx-data:booking_id="data_detail1.data.booking_id" dmx-on:success="delete_poup_msg.show();serverconnectform1.reset();admin_display_slot.load({})" dmx-on:error="error_popup_msg.show()"></dmx-api-action>
+<dmx-api-action id="delete_adminbook_slots" noload="true"></dmx-api-action>
+<dmx-api-action id="update_time_id" noload="true" url="/api/admin_booking/update_book_slots" method="post" data-type="json" dmx-data:meet_id="serverconnectform1.meeting_display.value" dmx-data:time_id="serverconnectform1.time_display.value" dmx-data:user_id="serverconnectform1.user_select.value" dmx-data:book_com="serverconnectform1.bdesc.value" dmx-data:status="serverconnectform1.status.value" dmx-data:date="serverconnectform1.my_date.value" dmx-on:success="update_poup_msg.show();serverconnectform1.reset()" dmx-on:error="error_popup_msg.show()" dmx-data:booking_id="serverconnectform1.booking_id.value"></dmx-api-action>
+
+
+<dmx-value id="formaction"></dmx-value>
+<dmx-value id="selected_user"></dmx-value>
+<dmx-serverconnect id="meeting_rooms" url="/api/meeting_rooms_api/admin_display_rooms"></dmx-serverconnect>
+<dmx-api-action id="validate_record_check_slot" noload="true" method="post" url="/api/validations/validate_admin_slot_details" data-type="json" dmx-data:date="serverconnectform1.my_date.value" dmx-data:time_id="serverconnectform1.time_display.value" dmx-data:user_id="serverconnectform1.user_select.value" dmx-on:success="
+formaction.value == 'update'
+      ? update_time_id.load()
+      : serverconnectform1.submit()
+  " dmx-on:error="error_popup_msg.toggle()" dmx-data:meet_id="serverconnectform1.meeting_display.value" dmx-data:book_com="serverconnectform1.bdesc.value" dmx-data:booking_id="serverconnectform1.booking_id.value" dmx-on:invalid="notifies2.danger('Kindly Fill All The Fields !')"></dmx-api-action>
+<!-- <div class="modal fade text-bg-success" id="success_poup_msg" is="dmx-bs5-modal" tabindex="-1">
+    <div class="modal-dialog modal-dialog-centered" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title text-body-emphasis">Slot Alloted!</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                <p class="text-body-emphasis">Insertion Successful !</p>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-success" dmx-on:click="browser2.goto('/admin/booking_admin_side')">OK</button>
+            </div>
+        </div>
+    </div>
+</div> -->
+<div class="modal fade" id="success_poup_msg" is="dmx-bs5-modal" tabindex="-1">
+    <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-content border-success shadow-lg">
+            <div class="modal-header bg-success text-white">
+                <h5 class="modal-title"> Slot Allotted!</h5>
+                <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body text-center">
+                <p class="fs-5">The slot is confirmed.</p>
+            </div>
+            <div class="modal-footer justify-content-center">
+                <button type="button" class="btn btn-success px-4" dmx-on:click="admin_display_slot.load({});success_poup_msg.toggle();serverconnectform1.reset(true)">OK</button>
+            </div>
+        </div>
+    </div>
+</div>
+<div class="modal fade" id="update_poup_msg" is="dmx-bs5-modal" tabindex="-1">
+    <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-content border-success shadow-lg">
+            <div class="modal-header bg-success text-white">
+                <h5 class="modal-title"> Slot Updated!</h5>
+                <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body text-center">
+                <p class="fs-5">Booking List Was Modified!</p>
+            </div>
+            <div class="modal-footer justify-content-center">
+                <button type="button" class="btn btn-success px-4" dmx-on:click="admin_display_slot.load({});update_poup_msg.toggle();serverconnectform1.reset()">OK</button>
+            </div>
+        </div>
+    </div>
+</div>
+<div class="modal fade" id="delete_poup_msg" is="dmx-bs5-modal" tabindex="-1">
+    <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-content border-success shadow-lg">
+            <div class="modal-header bg-success text-white">
+                <h5 class="modal-title">Slot Deleted!</h5>
+                <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body text-center">
+                <p class="fs-5">Deleted!</p>
+            </div>
+            <div class="modal-footer justify-content-center">
+                <button type="button" class="btn btn-success px-4" dmx-on:click="admin_display_slot.load({});delete_poup_msg.toggle()">OK</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="modal fade" id="error_popup_msg" is="dmx-bs5-modal" tabindex="-1">
+    <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-content border-danger shadow-lg">
+            <div class="modal-header bg-danger text-white">
+                <h5 class="modal-title">Error!</h5>
+                <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body text-center">
+                <p class="fs-5">Oops, Record Already Exists!</p>
+            </div>
+            <div class="modal-footer justify-content-center">
+                <button type="button" class="btn btn-danger px-4" dmx-on:click="admin_display_slot.load({});error_popup_msg.toggle();serverconnectform1.reset(true)">OK</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+
+<!-- <div class="modal fade bg-light-subtle" id="error_popup_msg" is="dmx-bs5-modal" tabindex="-1">
+    <div class="modal-dialog modal-dialog-centered" role="document">
+        <div class="modal-content">
+            <div class="modal-header text-bg-danger">
+                <h5 class="modal-title text-body-emphasis">ERROR</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                <p class="text-body-emphasis">Record Already Exists&nbsp; :\</p>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-danger" dmx-on:click="browser2.goto('/admin/booking_admin_side')">OK</button>
+            </div>
+        </div>
+    </div>
+</div> -->
+<dmx-serverconnect id="serverconnect1" url="/api/insert_new_booking" noload="true" credentials="true"></dmx-serverconnect>
+
+
+<dmx-serverconnect id="user_list_dropdown" url="/api/users_list_dropdown"></dmx-serverconnect>
+
+<div is="dmx-browser" id="browser2"></div>
+<dmx-notifications id="notifies2"></dmx-notifications>
+<dmx-data-detail id="data_detail1" dmx-bind:data="admin_display_slot.data.admin_dislayuser_slot_details" key="booking_id"></dmx-data-detail>
+
+
+<dmx-serverconnect id="admin_display_slot" url="/api/admin_displayuser_slot_details"></dmx-serverconnect>
+<div class="modal" id="modal1" is="dmx-bs5-modal" tabindex="-1">
+    <div class="modal-dialog" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title">Confirm</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                <p>Are You Sure ?&nbsp;</p>
+            </div>
+            <div class="modal-footer">
+                <button type="reset" class="btn btn-danger" data-bs-dismiss="modal" id="close">Close</button>
+                <button type="submit" class="btn btn-success" id="success" dmx-on:click="serverconnectform1.submit()">OK</button>
+            </div>
+        </div>
+    </div>
+</div>
+<dmx-serverconnect id="display_admin_time"></dmx-serverconnect>
+
+
+
+
+
+<meta name="ac:route" content="/admin/booking_admin_side">
+
+<!-- Wappler include head-page="layouts/main" is="dmx-app" id="Booking_slots" appConnect="local" bootstrap5="cdn" jquery_35="cdn" fontawesome_4="cdn" components="{dmxNotifications:{},dmxBrowser:{},dmxBootstrap5Modal:{},dmxValidator:{},dmxDatePicker:{},dmxDataTraversal:{},dmxBootstrap5TableGenerator:{}}" moment_2="cdn" -->
+
+<script>
+    $(document).ready(function () {
+    $('#month-picker').datepicker({
+      format: 'mm',
+      viewMode: 'months',
+      minViewMode: 'months',
+      autoclose: true
+    });
+
+    $('#date-picker').datepicker({
+      format: 'dd',
+      autoclose: true
+    });
+
+    $('#update_booking_details').on('click', function() {
+    const booking_id = $('#booking_id').val();
+    console.log(booking_id);
+});
+
+
+$('#my_date').on('click',function(){
+console.log("klk");
+});
+    
+  });
+
+</script>
+
+
+<!-- <script>
+    document.addEventListener('DOMContentLoaded', function () {
+        setTimeout(function () {
+            // Initialize Select2
+            $('#user_select').select2({
+                placeholder: "Search User",
+                allowClear: true,
+                width: '100%'
+            });
+
+            // Wait for App Connect to populate the data, then set value
+            const selectedId = 
+                // data_detail1.data.user_id;
+                 dmx.app.data.data_detail1.data.user_id;
+            selectedId.on('change',function())
+            setTimeout(function () {
+                const selectedId = 
+                // data_detail1.data.user_id;
+                 dmx.app.data.data_detail1.data.user_id;
+                console.log(selectedId);
+                if (selectedId) {
+                    $('#user_select').val(selectedId).trigger('change');
+                }
+            }, 10000);
+        }, 100000); // Delay for App Connect rendering
+    });
+</script> -->
+
+<!-- <script>
+    document.addEventListener("DOMContentLoaded", function () {
+        // Step 1: Initialize Select2
+        $('#user_select').select2({
+            placeholder: "Search User",
+            allowClear: true,
+            width: '100%'
+        });
+
+        // Step 2: Wait for Wappler to finish binding
+        const updateSelectValue = () => {
+            const selectedId = dmx?.app?.data?.data_detail1?.data?.user_id;
+            if (selectedId) {
+                $('#user_select').val(selectedId).trigger('change');
+            }
+        };
+
+        // Step 3: Hook into Wappler's dynamic data changes
+        dmx.app.data.data_detail1.$watch("data", () => {
+            updateSelectValue();
+        });
+
+        // Also trigger once manually after 500ms (optional fallback)
+        setTimeout(updateSelectValue, 500);
+    });
+</script> -->
+
+
+
+<!-- <script>
+    document.addEventListener("DOMContentLoaded", function () {
+    // Step 1: Initialize Select2
+    $('#user_select').select2({
+      placeholder: "Search User",
+      allowClear: true,
+      width: '100%'
+    });
+
+    // Step 2: Wait until Wappler's data is ready
+    const interval = setInterval(function () {
+      const selectedId = dmx.app.data.data_detail1.data.user_id;
+
+      if (selectedId) {
+        $('#user_select').val(selectedId).trigger('change');
+        clearInterval(interval); // Stop checking once it's set
+      }
+    }, 11200); // Check every 200ms
+  });
+</script> -->
+<!-- <script>
+    document.addEventListener('DOMContentLoaded', function () {
+    // Initialize Select2 on the select element
+    $('#user_select').select2({
+      placeholder: "Search User",
+      allowClear: true,
+      width: '100%'
+    });
+
+    // Ensure that select2 is refreshed after the data is loaded
+    dmx.app.on('data_detail1:loaded', function () {
+      const selectedId = dmx.app.data.data_detail1.data.user_id;
+      // Update the value after data is loaded
+      if (selectedId) {
+        $('#user_select').val(selectedId).trigger('change');
+      }
+    });
+  });
+</script> -->
+
+
+
+
+
+
+
+
+
+
+
+
+
+<div is="dmx-browser" id="browser1"></div>
+<dmx-notifications id="notifies1"></dmx-notifications>
+<div class="container wappler-block p-3">
+
+
+
+    <div class="row">
+        <div class="col">
+            <h1 class="text-center shadow mb-5 text-bg-success rounded-pill">Let’s Book A Slot!</h1>
+        </div>
+    </div>
+    <div class="row">
+
+
+        <div class="col-lg-4 col-md-6">
+            <form method="post" is="dmx-serverconnect-form" id="serverconnectform1" action="/api/insert_new_booking" credentials="true" dmx-on:success="success_poup_msg.toggle();serverconnectform1.reset(true);admin_display_slot.load({})" dmx-on:error="error_popup_msg.toggle();serverconnectform1.reset(true)">
+
+                <div class="card shadow-sm rounded-4 p-4">
+
+                    <input id="booking_id" name="booking_id" type="hidden" class="form-control" dmx-bind:value="formaction.value=='update'?data_detail1.data.booking_id:data_detail1.data.booking_id">
+
+
+
+                    <h3 class="mb-4 text-success">Book a Time Slot</h3>
+
+
+
+
+
+                    <div class="mb-3">
+                        <label for="meeting_display" class="form-label fw-semibold">Select Meeting Room</label>
+                        <select id="meeting_display" name="meet_id" class="form-select border-success shadow-sm border-success rounded-pill" required="" dmx-bind:options="meeting_rooms.data.admin_display_rooms" optiontext="mroom_name" optionvalue="id" dmx-bind:value="formaction.value=='update'?data_detail1.data.id:''">
+                            <option selected="" value="">Choose Meet Room</option>
+                        </select>
+                    </div>
+
+
+                    <div class="mb-3">
+                        <label for="time_select" class="form-label fw-semibold">Select a Date</label>
+                        <input id="my_date" name="date" is="dmx-date-picker" class="form-control border-successshadow-sm border-success rounded-pill" required="" dmx-bind:value="formaction.value=='update'?data_detail1.data.date:''" dmx-bind:mindate="var1.datetime" dmx-on:blur="time_select.load({})">
+
+                    </div>
+
+                    <!-- <div class="mb-3">
+  <label for="my_date" class="form-label fw-semibold">Select a Date</label>
+  <input
+    id="my_date"
+    name="date"
+    is="dmx-date-picker"
+    class="form-control border-primary-subtle shadow-sm rounded-pill"
+    required
+    dmx-bind:value="form_action.value == 'update' ? user_slot_details.data.date : ''"
+    dmx-bind:min="now.formatDate('yyyy-MM-dd')"
+    data-rule-min="now.formatDate('yyyy-MM-dd')"
+  >
+</div> -->
+
+
+
+
+
+
+
+
+                    <div class="mb-3">
+                        <label for="meeting_display" class="form-label fw-semibold">Select Time-Slot</label>
+                        <select id="time_display" name="time_id" class="form-select border-success shadow-sm border-success rounded-pill" required="" dmx-bind:options="formaction.value == 'update' ? display_time.data.display_time : time_select.data.display_time" optiontext="start_time + '-' + end_time" optionvalue="time_id" dmx-bind:disabled="!my_date.value" dmx-bind:value="formaction.value=='update'?data_detail1.data.time_id:''">
+                            <option selected="" value="">Choose Time Slot</option>
+                        </select>
+                    </div>
+
+                    <!-- <select class="form-select border-success" id="user_select" name="user_id" dmx-bind:options="user_list_dropdown.data.users_list_dropdown" optiontext="username" optionvalue="user_id" required="" dmx-bind:value="formaction.value=='update'?data_detail1.data.user_id:null">
+                        <option selected="" value="">Select a user</option>
+                    </select> -->
+
+                    <!-- <select class="form-select border-success" id="user_select" name="user_id" dmx-bind:options="user_list_dropdown.data.users_list_dropdown" optiontext="username" optionvalue="user_id" required="" dmx-bind:value="formaction.value=='update'?data_detail1.data.user_id:null">
+                        <option selected="" value="">Select a user</option>
+                    </select> -->
+
+                    <div class="mb-3">
+                        <label for="meeting_display" class="form-label fw-semibold">Select UserName</label>
+                        <select class="form-select border-success rounded-pill" id="user_select" name="user_id" dmx-bind:options="user_list_dropdown.data.users_list_dropdown" optiontext="username" optionvalue="user_id" required="" dmx-bind:value="formaction.value=='update'?data_detail1.data.user_id:null">
+                            <option selected="" value="">Select a user</option>
+                        </select>
+
+                        <!-- <select class="form-select border-success" id="user_select" name="user_id" dmx-bind:options="user_list_dropdown.data.users_list_dropdown" optiontext="username" optionvalue="user_id" required="" dmx-bind:value="formaction.value=='update'?data_detail1.data.user_id:null">
+                            <option selected="" value="">Select a user</option>
+                        </select> -->
+                    </div>
+
+                    <!-- <select id="user_select" name="user_id" class="form-control" dmx-bind:options="user_list_dropdown.data.users_list_dropdown" optionvalue="user_id" optiontext="username" dmx-bind:value="formaction.value == 'update' ? data_detail1.data.user_id : null">
+                        <option value="">Select a user</option>
+                    </select> -->
+
+
+                    <!-- <select id="user_select" name="user_id" class="form-control" dmx-bind:options="user_list_dropdown.data.users_list_dropdown" optionvalue="user_id" optiontext="username" dmx-bind:value="formaction.value == 'update' ? data_detail1.data.user_id : null">
+                        <option value="">Select a user</option>
+                    </select> -->
+                    <div class="mb-3">
+                        <label for="meeting_display" class="form-label fw-semibold">Select Status</label>
+                        <select id="status" name="status" class="form-select border-success shadow-sm rounded-pill" required="" dmx-bind:value="formaction.value=='update'?data_detail1.data.status:''">
+                            <option selected="" value="">Status</option>
+                            <option value="pending">Pending</option>
+                            <option value="approved">Approved</option>
+                            <option value="rejected">Rejected</option>
+                        </select>
+                        <!-- <input type="text" class="form-control" id="inp_start_time" name="start_time" dmx-bind:value="data_detail1.data.start_time" aria-describedby="inp_start_time_help" placeholder="Enter Start time"> -->
+                    </div>
+
+
+                    <div class="mb-3">
+                        <label for="meeting_display" class="form-label fw-semibold">Comments</label>
+                        <textarea class="form-control border-success" id="bdesc" name="book_com" rows="4" placeholder="Comments" required="" dmx-bind:value="formaction.value=='update'?data_detail1.data.book_com:''"></textarea>
+                        <!-- <select id="status" name="status" class="form-select border-primary-subtle shadow-sm" required="" dmx-bind:value="formaction.value=='update'?data_detail1.data.status:''">
+                            <option selected="" value="">Status</option>
+                            <option value="pending">Pending</option>
+                            <option value="approved">Approved</option>
+                            <option value="rejected">Rejected</option>
+                        </select> -->
+                        <!-- <input type="text" class="form-control" id="inp_start_time" name="start_time" dmx-bind:value="data_detail1.data.start_time" aria-describedby="inp_start_time_help" placeholder="Enter Start time"> -->
+                    </div>
+
+
+
+                    <div class="row mt-5 mb-5">
+                        <div class="col">
+                            <button id="confirm_booking" class="btn btn-success w-100 rounded-pill" dmx-on:click="validate_record_check_slot.load({})">
+                                Confirm Booking
+                            </button>
+
+                        </div>
+
+                        <div class="text-center mt-5">
+                            <button class="btn btn-dark rounded-pill" dmx-on:click="browser1.goto('/admin_dashboard')">← Back to Admin Dashboard</button>
+                        </div>
+                    </div>
+
+
+
+                </div>
+
+            </form>
+        </div>
+        <div class="col">
+
+
+
+
+            <h3>Booking Details</h3>
+            <!-- <div class="table-responsive">
+                <table class="table table-bordered table-hover table-sm">
+                    <thead>
+                        <tr>
+                            <th>Username</th>
+                            <th>Date</th>
+                            <th>Start time</th>
+                            <th>End time</th>
+                            <th>Meeting-Rooms</th>
+                            <!-- <th>Roles</th> --
+                            <th>Comments</th>
+                            <th>Status</th>
+                            <th colspan="2">Modify</th>
+
+                        </tr>
+                    </thead>
+                    <tbody is="dmx-repeat" dmx-generator="bs5table" dmx-bind:repeat="admin_display_slot.data.admin_dislayuser_slot_details" id="tableRepeat1">
+                        <tr dmx-on:click="data_detail1.select(booking_id)">
+                            <td dmx-text="username" dmx-on:click="selected_user.setValue(booking_id)"></td>
+                            <td dmx-text="date" dmx-on:click="selected_user.setValue(booking_id)"></td>
+                            <td dmx-text="start_time"></td>
+                            <td dmx-text="end_time"></td>
+                            <td dmx-text="mroom_name"></td>
+                            <!-- <td dmx-text="roles"></td> --
+                            <td dmx-text="book_com"></td>
+                            <td dmx-text="status"></td>
+                            <td>
+                                <button class="btn btn-sm btn-outline-success rounded-pill px-3" dmx-on:click="data_detail1.select(booking_id);formaction.setValue('update')">
+                                    Update
+                                </button>
+                            </td>
+
+                            <!--  --
+                            <td>
+                                <button class="btn btn-sm btn-outline-danger rounded-pill px-3" dmx-on:click="delete_slots_book.load({})">
+                                    Delete
+                                </button>
+                            </td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div> -->
+
+            <div class="table-responsive">
+                <table class="table table-bordered table-hover table-sm align-middle text-center shadow-sm rounded">
+                    <thead class="table-dark">
+                        <tr>
+                            <th>Username</th>
+                            <th>Date</th>
+                            <th>Start Time</th>
+                            <th>End Time</th>
+                            <th>Meeting Rooms</th>
+                            <!-- <th>Roles</th> -->
+                            <th>Comments</th>
+                            <th>Status</th>
+                            <th colspan="2">Modify</th>
+                        </tr>
+                    </thead>
+                    <tbody is="dmx-repeat" dmx-generator="bs5table" dmx-bind:repeat="admin_display_slot.data.admin_dislayuser_slot_details" id="tableRepeat1">
+                        <tr class="align-middle" dmx-on:click="data_detail1.select(booking_id)">
+                            <td dmx-text="username" dmx-on:click="selected_user.setValue(booking_id)"></td>
+                            <td dmx-text="date" dmx-on:click="selected_user.setValue(booking_id)"></td>
+                            <td dmx-text="start_time"></td>
+                            <td dmx-text="end_time"></td>
+                            <td dmx-text="mroom_name"></td>
+                            <!-- <td dmx-text="roles"></td> -->
+                            <td dmx-text="book_com"></td>
+                            <td dmx-text="status"></td>
+                            <td>
+                                <button class="btn btn-sm btn-outline-success rounded-pill px-3" dmx-on:click="data_detail1.select(booking_id);formaction.setValue('update')">
+                                    Update
+                                </button>
+                            </td>
+                            <td>
+                                <button class="btn btn-sm btn-outline-danger rounded-pill px-3" dmx-on:click="delete_slots_book.load({})">
+                                    Delete
+                                </button>
+                            </td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+
+
+
+
+            <!-- <button id="add_booking_details" class="btn btn-success" dmx-on:click="formaction.setValue('add');serverconnectform1.reset(true)">Add </button>
+
+            <button id="update_booking_details" class="btn btn-outline-primary" dmx-on:click="formaction.setValue('update')" dmx-bind:disabled="!selected_user.value">Edit</button>
+
+            <button id="delete_slots" class="btn btn-outline-primary" dmx-on:click="update_slotscollapse.serverconnectform2.submit();delete_poup_msg.toggle();admin_display_slot.load({})" dmx-bind:disabled="!selected_user.value">Delete</button> -->
+            <div class="collapse" id="update_slotscollapse" is="dmx-bs5-collapse">
+                <form is="dmx-serverconnect-form" id="serverconnectform2" method="post" action="/api/admin_deleteuser_slot_details" dmx-generator="bootstrap5" dmx-form-type="horizontal" dmx-populate="data_detail1.data">
+                    <input type="hidden" name="booking_id" id="inp_booking_id" dmx-bind:value="data_detail1.data.booking_id">
+                </form>
+                <form is="dmx-serverconnect-form" id="update_userslot_details" method="post" action="/api/admin_updateuser_slot_details" dmx-generator="bootstrap5" dmx-form-type="vertical" dmx-populate="data_detail1.data" dmx-on:success="update_poup_msg.toggle();admin_display_slot.load({})" dmx-on:error="error_popup_msg.toggle()">
+                    <input type="hidden" name="booking_id" id="inp_booking_id" dmx-bind:value="data_detail1.data.booking_id">
+                    <div class="form-group mb-3">
+                        <label for="inp_date">Date</label>
+                        <input type="date" class="form-control" id="inp_date" name="date" dmx-bind:value="data_detail1.data.date" aria-describedby="inp_date_help" placeholder="Enter Date">
+                    </div>
+                    <div class="form-group mb-3">
+                        <label for="inp_username">Username</label>
+                        <input type="text" class="form-control" id="inp_username" name="username" dmx-bind:value="data_detail1.data.username" aria-describedby="inp_username_help" placeholder="Enter Username" readonly="true">
+                    </div>
+                    <div class="form-group mb-3 row">
+                        <label for="inp_username" class="col-sm-2 col-form-label">Username</label>
+                        <div class="col-sm-10">
+
+                            <!-- <input type="text" class="form-control" id="inp_username" name="username" dmx-bind:value="data_detail1.data.username" aria-describedby="inp_username_help" placeholder="Enter Username"> -->
+                            <!-- <select dmx-bind:options="user_list_dropdown.data.users_list_dropdown" optiontext="username" optionvalue="user_id">
+
+                            </select> -->
+                            <!-- <select class="form-select" id="user_select" name="user_id" dmx-bind:value="data_detail1.data.user_id" dmx-bind:options="user_list_dropdown.data.users_list_dropdown" optiontext="username" optionvalue="user_id">
+                                <option value="" disabled selected>Select a user</option>
+                            </select> -->
+                            <!-- <select class="form-select" id="user_select" name="user_id" dmx-bind:value="data_detail1.data.user_id" dmx-bind:options="user_list_dropdown.data.users_list_dropdown" optiontext="username" optionvalue="user_id">
+                                <option value="" disabled selected>Select a user</option>
+                            </select> -->
+                        </div>
+                    </div>
+                    <div class="form-group mb-3 row">
+                        <label for="inp_start_time" class="col-sm-2 col-form-label">Timings</label>
+                        <div class="col-sm-10">
+                            <!-- <select id="time_display" name="time_id" class="form-select border-primary-subtle shadow-sm" required="" dmx-bind:value="data_detail1.data.time_id" dmx-bind:options="display_admin_time.data.display_time" optiontext="start_time+'-'+end_time" optionvalue="time_id">
+                                <option selected disabled value="">Choose Time Slot</option>
+                            </select> -->
+                            <!-- <input type="text" class="form-control" id="inp_start_time" name="start_time" dmx-bind:value="data_detail1.data.start_time" aria-describedby="inp_start_time_help" placeholder="Enter Start time"> -->
+                        </div>
+                    </div>
+                    <div class="form-group mb-3 row">
+                        <label for="inp_start_time" class="col-sm-2 col-form-label">Status</label>
+                        <div class="col-sm-10">
+                            <select id="status" name="status" class="form-select border-primary-subtle shadow-sm" required="" dmx-bind:value="data_detail1.data.status">
+                                <option selected="" value="">Status</option>
+                                <option value="pending">Pending</option>
+                                <option value="approved">Approved</option>
+                                <option value="rejected">Rejected</option>
+                            </select>
+                            <!-- <input type="text" class="form-control" id="inp_start_time" name="start_time" dmx-bind:value="data_detail1.data.start_time" aria-describedby="inp_start_time_help" placeholder="Enter Start time"> -->
+                        </div>
+                    </div>
+                    <div class="form-group mb-3">
+                        <button class="btn btn-primary text-bg-success" dmx-bind:value="data_detail1.data.Save" dmx-bind:disabled="state.executing" type="submit">Save <span class="spinner-border spinner-border-sm" role="status" dmx-show="state.executing"></span></button>
+                    </div>
+
+
+
+
+                </form>
+            </div>
+        </div>
+    </div>
+
+</div>
+<meta name="ac:route" content="/Booking_slots">

@@ -1,0 +1,98 @@
+{
+  "meta": {
+    "$_SESSION": [
+      {
+        "type": "number",
+        "fieldName": "role_id",
+        "name": "role_id"
+      },
+      {
+        "type": "text",
+        "fieldName": "user_id",
+        "name": "user_id"
+      },
+      {
+        "type": "number",
+        "fieldName": "user_id_n",
+        "name": "user_id_n"
+      }
+    ]
+  },
+  "exec": {
+    "steps": [
+      {
+        "name": "",
+        "module": "auth",
+        "action": "restrict",
+        "options": {
+          "provider": "login_details_sp",
+          "permissions": [
+            "users"
+          ],
+          "loginUrl": "/users_dashboard",
+          "forbiddenUrl": "/error_page"
+        }
+      },
+      {
+        "name": "role_id",
+        "module": "core",
+        "action": "setsession",
+        "options": {
+          "value": "{{$_SESSION.role_id}}"
+        }
+      },
+      {
+        "name": "user_id",
+        "module": "core",
+        "action": "setsession",
+        "options": {
+          "value": "{{$_SESSION.user_id}}"
+        }
+      },
+      {
+        "name": "user_id_n",
+        "module": "core",
+        "action": "setsession",
+        "options": {
+          "value": "{{$_SESSION.user_id_n}}"
+        }
+      },
+      {
+        "name": "role_id",
+        "module": "core",
+        "action": "setvalue",
+        "options": {
+          "value": "{{role_id}}",
+          "key": "role_id"
+        },
+        "meta": [],
+        "outputType": "number",
+        "output": true
+      },
+      {
+        "name": "user_id",
+        "module": "core",
+        "action": "setvalue",
+        "options": {
+          "value": "{{user_id}}",
+          "key": "user_id"
+        },
+        "meta": [],
+        "outputType": "text",
+        "output": true
+      },
+      {
+        "name": "user_id_n",
+        "module": "core",
+        "action": "setvalue",
+        "options": {
+          "key": "user_id_n",
+          "value": "{{user_id_n}}"
+        },
+        "meta": [],
+        "outputType": "number",
+        "output": true
+      }
+    ]
+  }
+}

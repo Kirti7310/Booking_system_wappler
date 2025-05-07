@@ -1,0 +1,111 @@
+{
+  "meta": {
+    "$_GET": [
+      {
+        "type": "text",
+        "name": "sort"
+      },
+      {
+        "type": "text",
+        "name": "dir"
+      }
+    ]
+  },
+  "exec": {
+    "steps": [
+      {
+        "name": "display_time",
+        "module": "dbupdater",
+        "action": "custom",
+        "options": {
+          "connection": "booking_db",
+          "sql": {
+            "query": "select start_time,end_time,hour,time_id from time_slot ",
+            "params": []
+          }
+        },
+        "output": true,
+        "meta": [
+          {
+            "name": "start_time",
+            "type": "text"
+          },
+          {
+            "name": "end_time",
+            "type": "text"
+          },
+          {
+            "name": "hour",
+            "type": "number"
+          },
+          {
+            "name": "time_id",
+            "type": "number"
+          }
+        ],
+        "outputType": "array"
+      },
+      {
+        "name": "display_time",
+        "module": "dbconnector",
+        "action": "select",
+        "options": {
+          "connection": "booking_db",
+          "sql": {
+            "type": "select",
+            "columns": [
+              {
+                "table": "time_slot",
+                "column": "start_time",
+                "recid": 1
+              },
+              {
+                "table": "time_slot",
+                "column": "end_time",
+                "recid": 2
+              },
+              {
+                "table": "time_slot",
+                "column": "hour",
+                "recid": 3
+              },
+              {
+                "table": "time_slot",
+                "column": "time_id",
+                "recid": 4
+              }
+            ],
+            "params": [],
+            "table": {
+              "name": "time_slot"
+            },
+            "primary": "time_id",
+            "joins": [],
+            "query": "select `start_time`, `end_time`, `hour`, `time_id` from `time_slot`"
+          }
+        },
+        "output": true,
+        "meta": [
+          {
+            "type": "text",
+            "name": "start_time"
+          },
+          {
+            "type": "text",
+            "name": "end_time"
+          },
+          {
+            "type": "number",
+            "name": "hour"
+          },
+          {
+            "type": "number",
+            "name": "time_id"
+          }
+        ],
+        "outputType": "array",
+        "disabled": true
+      }
+    ]
+  }
+}

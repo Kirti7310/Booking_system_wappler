@@ -1,0 +1,112 @@
+{
+  "routes": [
+    {
+      "path": "/",
+      "page": "index",
+      "routeType": "page",
+      "layout": "main"
+    },
+    {
+      "path": "/registeration_page",
+      "page": "registeration_page",
+      "layout": "main"
+    },
+    {
+      "path": "/login_page",
+      "page": "login_page",
+      "layout": "main"
+    },
+    {
+      "path": "/booking_slots",
+      "page": "booking_slots",
+      "layout": "main"
+    },
+    {
+      "path": "/admin_dashboard",
+      "page": "admin_dashboard",
+      "layout": "main",
+      "exec": "/api/admin_login_success"
+    },
+    {
+      "path": "/admin/dashboard",
+      "page": "admin/dashboard",
+      "layout": "main"
+    },
+    {
+      "path": "/admin/users_admin",
+      "page": "admin/users_admin",
+      "layout": "main"
+    },
+    {
+      "path": "/users_dashboard",
+      "page": "users_dashboard",
+      "layout": "main",
+      "exec": "/api/users_login_success"
+    },
+    {
+      "path": "/admin/booking_admin_side",
+      "page": "admin/booking_admin_side",
+      "layout": "main"
+    },
+    {
+      "path": "/admin/meeting_rooms",
+      "page": "admin/meeting_rooms",
+      "layout": "main"
+    },
+    {
+      "path": "/error_page",
+      "page": "error_page",
+      "layout": "main"
+    },
+    {
+      "path": "/emailform",
+      "page": "emailform",
+      "layout": "main"
+    },
+    {
+      "path": "/password_reset_link",
+      "page": "password_reset_link",
+      "layout": "main"
+    },
+    {
+      "path": "/password_reset_link",
+      "page": "password_reset_link",
+      "layout": "main"
+    },
+    {
+      "path": "/password_new",
+      "page": "password_new",
+      "layout": "main"
+    },
+    {
+      "path": "/passwrd",
+      "page": "passwrd",
+      "layout": "main"
+    },
+    {
+      "path": "/password_reset",
+      "page": "password_reset",
+      "layout": "main"
+    },
+    {
+      "path": "/bookings_all",
+      "page": "bookings_all",
+      "layout": "main"
+    },
+    {
+      "path": "/booking_history",
+      "page": "booking_history",
+      "layout": "main"
+    },
+    {
+      "path": "/booking_slots_userside",
+      "page": "booking_slots_userside",
+      "layout": "main"
+    }
+  ],
+  "layouts": {
+    "main": {
+      "exec": ""
+    }
+  }
+}
