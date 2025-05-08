@@ -102,6 +102,11 @@
       "path": "/booking_slots_userside",
       "page": "booking_slots_userside",
       "layout": "main"
+    },
+    {
+      "path": "/book_slots_gridview",
+      "page": "book_slots_gridview",
+      "layout": "main"
     }
   ],
   "layouts": {

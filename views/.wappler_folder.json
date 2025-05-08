@@ -58,5 +58,9 @@
   "booking_slots_userside.ejs": {
     "layoutPage": "main",
     "description": ""
+  },
+  "book_slots_gridview.ejs": {
+    "layoutPage": "main",
+    "description": ""
   }
 }
