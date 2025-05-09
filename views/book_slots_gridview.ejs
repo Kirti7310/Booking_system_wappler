@@ -1,30 +1,53 @@
 <!-- Wappler include head-page="layouts/main" is="dmx-app" id="book_slots_gridview" appConnect="local" bootstrap5="cdn" jquery_35="cdn" fontawesome_4="cdn" components="{dmxCalendar:{},dmxNotifications:{}}" -->
-<!-- <dmx-calendar id="calendar2" event-constraint="" view="timeGridDay"></dmx-calendar> -->
 <dmx-notifications id="notifies1"></dmx-notifications>
 <meta name="ac:route" content="/book_slots_gridview">
+
 <div class="container">
     <div class="row">
         <div class="col">
 
-            <dmx-calendar id="calendar1" aspect-ratio="1.7" plugins="timeGrid" theme="bootstrap5" view="timeGridDay" selectable="true" editable="true" views="dayGridMonth,timeGridDay" dmx-on:select="form1.input1.setValue($event.start+$event.end)" no-event-overlap="true">
+            <dmx-calendar id="calendar1" aspect-ratio="1.7" plugins="timeGrid" theme="bootstrap5" view="timeGridDay" selectable="true" editable="true" views="dayGridMonth,timeGridDay" dmx-on:select="start_input.setValue($event.start); end_input.setValue($event.end)" no-event-overlap="true">
 
-                <dmx-calendar-source id="source2" dmx-bind:events="serverconnect1.data.each_user_slot_details" event-title="book_com" event-id="booking_id" background-color="#68ce6b" event-start="date"></dmx-calendar-source>
-                <!-- <dmx-calendar-source id="source1" border-color="#d52f2f">
-                    <dmx-calendar-event id="event1" title="my_event" start="2025-05-09T00:00" end="2025-05-10T00:00"></dmx-calendar-event>
-                </dmx-calendar-source> -->
+                <dmx-calendar-source id="source2" dmx-bind:events="serverconnect1.data.each_user_slot_details" event-title="book_com" event-id="booking_id" background-color="#68ce6b" event-start="date">
+                </dmx-calendar-source>
             </dmx-calendar>
-            <form id="form1">
-                <div class="form-group mb-3 row">
-                    <label for="input1" class="col-sm-2 col-form-label">Date: </label>
-                    <div class="col-sm-10">
-                        <input class="form-control" id="input1" name="start" aria-describedby="input1_help" placeholder="Enter The Date">
 
+            <form id="form1">
+                <!-- Start Time Field -->
+                <div class="form-group mb-3 row">
+                    <label for="start_input" class="col-sm-2 col-form-label">Start Time:</label>
+                    <div class="col-sm-10">
+                        <input class="form-control" type="text" id="start_input" name="start_time" placeholder="Start time" dmx-bind:value="start_input.value">
+                    </div>
+                </div>
+
+                <!-- End Time Field -->
+                <div class="form-group mb-3 row">
+                    <label for="end_input" class="col-sm-2 col-form-label">End Time:</label>
+                    <div class="col-sm-10">
+                        <input class="form-control" type="text" id="end_input" name="end_time" placeholder="End time" dmx-bind:value="end_input.value">
+                    </div>
+                </div>
+
+                <!-- Comments Textarea -->
+                <div class="form-group mb-3 row">
+                    <label for="comments" class="col-sm-2 col-form-label">Comments:</label>
+                    <div class="col-sm-10">
+                        <textarea class="form-control" id="comments" name="comments" rows="3" placeholder="Enter your comments..."></textarea>
+                    </div>
+                </div>
+
+                <!-- Submit Button -->
+                <div class="form-group row">
+                    <div class="col-sm-10 offset-sm-2">
+                        <button type="submit" class="btn btn-primary">Submit Booking</button>
                     </div>
                 </div>
             </form>
         </div>
     </div>
-    <dmx-serverconnect id="serverconnect1" url="/api/user_booking/single_user_booking_copy"></dmx-serverconnect>
 
+    <!-- Server Connect to Load Events -->
+    <dmx-serverconnect id="serverconnect1" url="/api/user_booking/single_user_booking_copy"></dmx-serverconnect>
 
 </div>
